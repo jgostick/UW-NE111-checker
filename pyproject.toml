@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "uw-ne111-grader"
+version = "0.1.0"
+description = "Reusable student-facing graders for UW NE 111"
+readme = "README.md"
+requires-python = ">=3.10,<3.13"
+dependencies = [
+    "numpy>=1.26",
+    "streamlit>=1.40",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.8",
+]
+
+[project.scripts]
+ne111-grader = "ne111_grader.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+addopts = "-ra"
+testpaths = ["tests"]

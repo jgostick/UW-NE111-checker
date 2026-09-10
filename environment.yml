@@ -1,0 +1,6 @@
+name: ne111
+dependencies:
+  - python=3.12
+  - pip
+  - pip:
+      - ".[dev]"
