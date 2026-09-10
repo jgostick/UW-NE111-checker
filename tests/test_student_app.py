@@ -7,7 +7,7 @@ from streamlit.testing.v1 import AppTest
 
 
 def test_student_app_runs_a_question(monkeypatch, tmp_path) -> None:
-    submission = tmp_path / "A1.py"
+    submission = tmp_path / "my_solution.py"
     submission.write_text(
         "def A1Q1(value):\n    return float(value)\n", encoding="utf-8"
     )

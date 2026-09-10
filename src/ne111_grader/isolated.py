@@ -6,6 +6,7 @@ import json
 import os
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 from .models import CaseResult, CheckResult, QuestionResult, resolve_submission
@@ -92,4 +93,28 @@ def run_question_isolated(
             assignment_id,
             question_id,
             f"Could not read grader result: {error}",
+        )
+
+
+def run_question_source(
+    assignment_id: str,
+    question_id: str,
+    source: bytes,
+    *,
+    filename: str = "submission.py",
+    timeout: float = 5.0,
+) -> QuestionResult:
+    """Run a question using source uploaded through a browser."""
+    safe_name = Path(filename).name
+    if not safe_name.lower().endswith(".py"):
+        safe_name += ".py"
+
+    with tempfile.TemporaryDirectory(prefix="ne111-upload-") as temporary:
+        submission = Path(temporary) / safe_name
+        submission.write_bytes(source)
+        return run_question_isolated(
+            assignment_id,
+            question_id,
+            submission,
+            timeout=timeout,
         )

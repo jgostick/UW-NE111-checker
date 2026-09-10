@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import textwrap
 
-from ne111_grader.isolated import run_question_isolated
+from ne111_grader.isolated import run_question_isolated, run_question_source
 from ne111_grader.registry import get_assignment
 
 REFERENCE = """
@@ -62,3 +62,16 @@ def test_missing_function_is_reported(tmp_path) -> None:
 
     assert not result.passed
     assert "A1Q1 was not found" in result.cases[0].checks[0].message
+
+
+def test_uploaded_source_can_have_any_python_filename() -> None:
+    source = b"def A1Q1(value):\n    return float(value)\n"
+
+    result = run_question_source(
+        "A1",
+        "Q1",
+        source,
+        filename="student_12345_submission.py",
+    )
+
+    assert result.passed
