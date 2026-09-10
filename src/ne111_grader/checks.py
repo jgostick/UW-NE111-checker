@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import ast
+import textwrap
 from dataclasses import dataclass
 from typing import Any
 
@@ -116,3 +118,25 @@ class TypeIs:
                 f"Expected type {self.expected.__name__}, got {actual.__name__}",
             )
         return CheckResult(True, f"Returned type {self.expected.__name__}")
+
+
+@dataclass(frozen=True)
+class UsesSyntax:
+    """Check a function's parsed source for a required Python syntax node."""
+
+    expected: type[ast.AST]
+    label: str
+
+    def evaluate(self, record: CallRecord) -> CheckResult:
+        failure = _unexpected_exception(record)
+        if failure:
+            return failure
+        if not record.source:
+            return CheckResult(False, "Could not inspect the function source")
+        try:
+            tree = ast.parse(textwrap.dedent(record.source))
+        except SyntaxError as error:
+            return CheckResult(False, f"Could not parse the function source: {error}")
+        if any(isinstance(node, self.expected) for node in ast.walk(tree)):
+            return CheckResult(True, f"Used the required syntax: {self.label}")
+        return CheckResult(False, f"Did not use the required syntax: {self.label}")

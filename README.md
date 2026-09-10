@@ -22,11 +22,12 @@ cd path/to/assignment
 ne111-grader A1
 ```
 
-The current prototype expects `A1.py` in the working directory. An explicit
-path can also be supplied:
+The grader supports A1 and A2 and expects the corresponding file in the working
+directory. An explicit path can also be supplied:
 
 ```console
 ne111-grader A1 --submission path/to/A1.py
+ne111-grader A2 --submission path/to/A2.py
 ```
 
 Stop the Streamlit server with `Ctrl+C`.
@@ -53,7 +54,7 @@ uv run ne111-grader A1 --submission path/to/A1.py
 
 - `models.py` defines assignments, questions, cases, and structured results.
 - `checks.py` contains composable checks such as exact equality, approximate
-  equality, expected exceptions, and silence.
+  equality, expected exceptions, silence, and required Python syntax.
 - `runner.py` is a pure in-process executor with no Streamlit dependency.
 - `worker.py` loads and tests a submission in a temporary working directory.
 - `isolated.py` manages child processes and enforces timeouts.

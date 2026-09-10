@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import copy
+import inspect
 import io
 from collections.abc import Callable
 from contextlib import redirect_stderr, redirect_stdout
@@ -16,6 +17,10 @@ def run_case(function: Callable[..., object], case: Case) -> CaseResult:
     stderr = io.StringIO()
     return_value = None
     exception: BaseException | None = None
+    try:
+        source = inspect.getsource(function)
+    except (OSError, TypeError):
+        source = ""
 
     try:
         args = copy.deepcopy(case.args)
@@ -30,6 +35,7 @@ def run_case(function: Callable[..., object], case: Case) -> CaseResult:
         exception=exception,
         stdout=stdout.getvalue(),
         stderr=stderr.getvalue(),
+        source=source,
     )
     results = tuple(check.evaluate(record) for check in case.checks)
     return CaseResult(

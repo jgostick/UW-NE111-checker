@@ -27,6 +27,7 @@ class CallRecord:
     exception: BaseException | None = None
     stdout: str = ""
     stderr: str = ""
+    source: str = ""
 
 
 class Check(Protocol):

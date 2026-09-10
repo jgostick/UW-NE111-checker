@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
-from .assignments.a1 import ASSIGNMENT
+from .assignments.a1 import ASSIGNMENT as A1
+from .assignments.a2 import ASSIGNMENT as A2
 from .models import Assignment
 
-_ASSIGNMENTS = {ASSIGNMENT.id: ASSIGNMENT}
+_ASSIGNMENTS = {assignment.id: assignment for assignment in (A1, A2)}
 
 
 def get_assignment(assignment_id: str) -> Assignment:
