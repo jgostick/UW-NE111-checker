@@ -45,6 +45,23 @@ conda activate ne111
 python -m pip install --upgrade --force-reinstall "uw-ne111-grader @ git+https://github.com/jgostick/UW-NE111-grader.git@main"
 ```
 
+## Alternative: uvx
+
+If you use [uv](https://docs.astral.sh/uv/getting-started/installation/), no
+Conda environment or separate grader installation is required. Run the grader
+directly from GitHub:
+
+```console
+uvx --python 3.12 --from "git+https://github.com/jgostick/UW-NE111-grader.git@main" ne111-grader A3
+```
+
+uv creates and caches an isolated environment automatically. To force it to
+check GitHub for an updated version, add `--refresh`:
+
+```console
+uvx --refresh --python 3.12 --from "git+https://github.com/jgostick/UW-NE111-grader.git@main" ne111-grader A3
+```
+
 ## Development
 
 Create a local environment from the repository:
