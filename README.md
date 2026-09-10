@@ -1,36 +1,49 @@
 # UW NE 111 Grader
 
-Prototype of a reusable grading engine and student-facing Streamlit app for
-UW NE 111 assignments.
+Reusable grading engine and student-facing Streamlit app for UW NE 111
+assignments.
 
-## Student workflow
+## Student installation
 
-After the package is released, create the course environment once:
+Do this once in Anaconda Prompt on Windows or a terminal on macOS:
 
 ```console
-conda create -n ne111 python=3.12 pip -y
+conda create -n ne111 python=3.12 pip git -y
 conda activate ne111
-python -m pip install uw-ne111-grader==0.1.0
+python -m pip install "uw-ne111-grader @ git+https://github.com/jgostick/UW-NE111-grader.git@main"
 ```
 
-For each work session, activate the environment, change to the folder containing
-the submission, and select the assignment:
+## Using the grader
+
+For each work session, activate the environment and launch the required
+assignment (`A1` through `A8`):
 
 ```console
 conda activate ne111
-cd path/to/assignment
-ne111-grader A1
+ne111-grader A3
 ```
 
-The grader supports A1 and A2 and expects the corresponding file in the working
-directory. An explicit path can also be supplied:
+The grader opens in a browser. Browse for your `.py` file, select a question tab,
+and press its **Run** button. The filename itself does not matter.
+
+If the file is named `A3.py` and the command is run from the same directory, it
+is selected automatically. A path can also be supplied explicitly:
 
 ```console
-ne111-grader A1 --submission path/to/A1.py
-ne111-grader A2 --submission path/to/A2.py
+ne111-grader A3 --submission path/to/A3.py
 ```
 
 Stop the Streamlit server with `Ctrl+C`.
+
+## Updating
+
+When instructed to update the grader, activate the environment and reinstall it
+from GitHub:
+
+```console
+conda activate ne111
+python -m pip install --upgrade --force-reinstall "uw-ne111-grader @ git+https://github.com/jgostick/UW-NE111-grader.git@main"
+```
 
 ## Development
 
@@ -53,8 +66,8 @@ uv run ne111-grader A1 --submission path/to/A1.py
 ## Architecture
 
 - `models.py` defines assignments, questions, cases, and structured results.
-- `checks.py` contains composable checks such as exact equality, approximate
-  equality, expected exceptions, silence, and required Python syntax.
+- `checks.py` contains composable checks for values, exceptions, syntax,
+  generated files, NumPy arrays, and returned object attributes.
 - `runner.py` is a pure in-process executor with no Streamlit dependency.
 - `worker.py` loads and tests a submission in a temporary working directory.
 - `isolated.py` manages child processes and enforces timeouts.
@@ -65,6 +78,5 @@ The child process protects the Streamlit app from ordinary crashes, import
 failures, and infinite loops. It is not a security sandbox: deliberately hostile
 submissions require operating-system or container isolation.
 
-Private marker cases should live outside this public package. A future marker
-dashboard can consume the same result model while loading a separate private
-specification package.
+Private marker cases live in the separate `UW-NE111-marker` package, which uses
+this package's execution engine and result model.

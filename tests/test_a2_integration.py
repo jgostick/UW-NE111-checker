@@ -59,4 +59,4 @@ def test_public_a2_reference_passes(tmp_path) -> None:
 
     assert all(result.passed for result in results)
     assert sum(len(result.cases) for result in results) == 27
-    assert assignment_ids() == ("A1", "A2")
+    assert assignment_ids() == tuple(f"A{number}" for number in range(1, 9))
