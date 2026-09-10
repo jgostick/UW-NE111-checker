@@ -12,7 +12,7 @@ import tempfile
 import uuid
 from pathlib import Path
 
-from .models import CaseResult, CheckResult, QuestionResult
+from .models import Assignment, CaseResult, CheckResult, QuestionResult
 from .registry import get_assignment
 from .runner import run_case
 
@@ -38,10 +38,9 @@ def _load_module(path: Path):
     return module
 
 
-def run_question(
-    assignment_id: str, question_id: str, submission: Path
+def run_question_for_assignment(
+    assignment: Assignment, question_id: str, submission: Path
 ) -> QuestionResult:
-    assignment = get_assignment(assignment_id)
     question = assignment.question(question_id)
 
     with tempfile.TemporaryDirectory(prefix="ne111-grader-") as temporary:
@@ -75,6 +74,14 @@ def run_question(
             return QuestionResult(assignment.id, question.id, cases)
         finally:
             os.chdir(previous_directory)
+
+
+def run_question(
+    assignment_id: str, question_id: str, submission: Path
+) -> QuestionResult:
+    """Run a public assignment question in the worker process."""
+    assignment = get_assignment(assignment_id)
+    return run_question_for_assignment(assignment, question_id, submission)
 
 
 def main(argv: list[str] | None = None) -> int:

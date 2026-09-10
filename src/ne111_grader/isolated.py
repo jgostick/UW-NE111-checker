@@ -9,17 +9,22 @@ import sys
 import tempfile
 from pathlib import Path
 
-from .models import CaseResult, CheckResult, QuestionResult, resolve_submission
+from .models import (
+    Assignment,
+    CaseResult,
+    CheckResult,
+    QuestionResult,
+    resolve_submission,
+)
 from .registry import get_assignment
 from .worker import RESULT_PREFIX
 
 
 def _question_failure(
-    assignment_id: str,
+    assignment: Assignment,
     question_id: str,
     message: str,
 ) -> QuestionResult:
-    assignment = get_assignment(assignment_id)
     question = assignment.question(question_id)
     cases = tuple(
         CaseResult(case.id, False, (CheckResult(False, message),))
@@ -28,18 +33,19 @@ def _question_failure(
     return QuestionResult(assignment.id, question.id, cases)
 
 
-def run_question_isolated(
-    assignment_id: str,
+def run_question_with_worker(
+    assignment: Assignment,
     question_id: str,
     submission: str | Path,
     *,
+    worker_module: str,
     timeout: float = 5.0,
 ) -> QuestionResult:
-    """Run one question in a disposable child process."""
+    """Run one question using an installed worker module."""
     submission_path = resolve_submission(submission)
     if not submission_path.is_file():
         return _question_failure(
-            assignment_id,
+            assignment,
             question_id,
             f"Submission file not found: {submission_path}",
         )
@@ -47,8 +53,8 @@ def run_question_isolated(
     command = [
         sys.executable,
         "-m",
-        "ne111_grader.worker",
-        assignment_id,
+        worker_module,
+        assignment.id,
         question_id,
         str(submission_path),
     ]
@@ -66,7 +72,7 @@ def run_question_isolated(
         )
     except subprocess.TimeoutExpired:
         return _question_failure(
-            assignment_id,
+            assignment,
             question_id,
             f"Timed out after {timeout:g} seconds",
         )
@@ -84,16 +90,34 @@ def run_question_isolated(
         message = "Grader worker exited without returning a result"
         if detail:
             message += f": {detail[-500:]}"
-        return _question_failure(assignment_id, question_id, message)
+        return _question_failure(assignment, question_id, message)
 
     try:
         return QuestionResult.from_dict(json.loads(payload))
     except (json.JSONDecodeError, KeyError, TypeError, ValueError) as error:
         return _question_failure(
-            assignment_id,
+            assignment,
             question_id,
             f"Could not read grader result: {error}",
         )
+
+
+def run_question_isolated(
+    assignment_id: str,
+    question_id: str,
+    submission: str | Path,
+    *,
+    timeout: float = 5.0,
+) -> QuestionResult:
+    """Run one question in a disposable child process."""
+    assignment = get_assignment(assignment_id)
+    return run_question_with_worker(
+        assignment,
+        question_id,
+        submission,
+        worker_module="ne111_grader.worker",
+        timeout=timeout,
+    )
 
 
 def run_question_source(
