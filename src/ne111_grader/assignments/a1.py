@@ -23,9 +23,7 @@ ASSIGNMENT = Assignment(
             id="Q2",
             title="Operator precedence",
             input_names=("a", "b", "c"),
-            cases=(
-                Case("Q2.1", args=(2, 3, 4), checks=(Equals(14),)),
-            ),
+            cases=(Case("Q2.1", args=(2, 3, 4), checks=(Equals(14),)),),
         ),
         Question(
             id="Q3",
@@ -37,7 +35,7 @@ ASSIGNMENT = Assignment(
             id="Q4",
             title="Swap two values",
             input_names=("x", "y"),
-            cases=(Case("Q4.1", args=(10, 20), checks=(Equals((20, 10)),)),),
+            cases=(Case("Q4.1", args=(2, 3), checks=(Equals(9),)),),
         ),
         Question(
             id="Q5",
@@ -48,12 +46,12 @@ ASSIGNMENT = Assignment(
         Question(
             id="Q6",
             title="Use the math library",
-            input_names=("ceiling_value", "floor_value", "logarithm_value"),
+            input_names=("value",),
             cases=(
                 Case(
                     "Q6.1",
-                    args=(4.3, 4.8, 1000),
-                    checks=(Equals((5, 4, 3.0)), UsesSymbol("math")),
+                    args=(4.8,),
+                    checks=(Approx(5 + 4 + 0.6812412373755872), UsesSymbol("math")),
                 ),
             ),
         ),
@@ -65,30 +63,25 @@ ASSIGNMENT = Assignment(
         ),
         Question(
             id="Q8",
-            title="Circle area and circumference",
+            title="Circle area",
             input_names=("radius",),
             cases=(
                 Case(
                     "Q8.1",
                     args=(2,),
-                    checks=(Approx((4 * 3.141592653589793, 4 * 3.141592653589793)),),
+                    checks=(Approx(4 * 3.141592653589793),),
                 ),
             ),
         ),
         Question(
             id="Q9",
             title="Types and conversion",
-            input_names=(
-                "integer_value",
-                "float_value",
-                "text_value",
-                "boolean_value",
-            ),
+            input_names=("value",),
             cases=(
                 Case(
                     "Q9.1",
-                    args=(42, 3.14, "100", True),
-                    checks=(Equals(("int", "float", "str", "bool", 100, 100.0)),),
+                    args=(3.14,),
+                    checks=(Equals("<class 'float'>"),),
                 ),
             ),
         ),
@@ -97,43 +90,6 @@ ASSIGNMENT = Assignment(
             title="Absolute difference",
             input_names=("a", "b"),
             cases=(Case("Q10.1", args=(17, 4), checks=(Equals(13),)),),
-        ),
-        Question(
-            id="Q11",
-            title="Exponents and multiplication",
-            cases=(
-                Case(
-                    "Q11.1",
-                    checks=(Equals((81, 81, True)), UsesSymbol("exponent")),
-                ),
-            ),
-        ),
-        Question(
-            id="Q12",
-            title="Multiple assignment",
-            cases=(
-                Case(
-                    "Q12.1",
-                    checks=(Equals((2, 3, 4, 5, 5, 5, 9, 125)),),
-                ),
-            ),
-        ),
-        Question(
-            id="Q13",
-            title="Operator precedence",
-            cases=(Case("Q13.1", checks=(Approx((14, 20, 7, 2)),)),),
-        ),
-        Question(
-            id="Q14",
-            title="Negative numbers",
-            input_names=("positive_num", "negative_num"),
-            cases=(
-                Case(
-                    "Q14.1",
-                    args=(10, -7),
-                    checks=(Approx((3, 17, -70, -10 / 7, 7)),),
-                ),
-            ),
         ),
     ),
 )

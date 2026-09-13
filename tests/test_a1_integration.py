@@ -26,17 +26,13 @@ REFERENCE_CELLS = [
     "# A1Q1\nanswer = a % b",
     "# A1Q2\nanswer = a + b * c",
     "# A1Q3\nx = starting_value\nx = x * scale\nx = x + offset\nanswer = x",
-    "# A1Q4\nx, y = y, x\nanswer = (x, y)",
+    "# A1Q4\nx, y = y, x\nanswer = x**y",
     "# A1Q5\nanswer = (9 / 5) * celsius + 32",
-    "# A1Q6\nimport math\nanswer = (math.ceil(ceiling_value), math.floor(floor_value), math.log10(logarithm_value))",
+    "# A1Q6\nimport math\nanswer = math.ceil(value) + math.floor(value) + math.log10(value)",
     "# A1Q7\nanswer = number ** (1 / root)",
-    "# A1Q8\nimport math\nanswer = (math.pi * radius**2, 2 * math.pi * radius)",
-    "# A1Q9\nanswer = (type(integer_value).__name__, type(float_value).__name__, type(text_value).__name__, type(boolean_value).__name__, int(text_value), float(text_value))",
+    "# A1Q8\nimport math\nanswer = math.pi * radius**2",
+    "# A1Q9\nanswer = str(type(value))",
     "# A1Q10\nanswer = abs(a - b)",
-    "# A1Q11\nbase = 3\nexponent = 4\npower_result = base**exponent\nmultiplication_result = base * base * base * base\nanswer = (power_result, multiplication_result, power_result == multiplication_result)",
-    "# A1Q12\na, b, c = 2, 3, 4\nx = y = z = 5\nanswer = (a, b, c, x, y, z, a + b + c, x * y * z)",
-    "# A1Q13\nanswer = (2 + 3 * 4, (2 + 3) * 4, 10 - 6 / 2, (10 - 6) / 2)",
-    "# A1Q14\nanswer = (positive_num + negative_num, positive_num - negative_num, positive_num * negative_num, positive_num / negative_num, abs(negative_num))",
 ]
 
 

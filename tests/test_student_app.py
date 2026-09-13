@@ -37,5 +37,5 @@ def test_student_app_runs_a_question(monkeypatch, tmp_path) -> None:
 
     assert not app.exception
     assert not app.error
-    assert len(app.tabs) == 14
+    assert len(app.tabs) == 10
     assert len(app.success) == 2
