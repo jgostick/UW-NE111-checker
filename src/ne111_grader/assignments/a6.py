@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
-import ast
-
-import numpy as np
-
-from ..checks import Approx, AvoidsSyntax, DTypeIs, Equals
+from ..checks import Approx, DocstringContains, Equals, Raises, SourceEquals
 from ..models import Assignment, Case, Question
+
+_FORMATTED_Q3 = """
+def A6Q3(a, b=1, c=5):
+    ans1 = (-b + (b**2 - 4 * a * c) ** 0.5) / (2 * a)  # One root
+    ans2 = (-b - (b**2 - 4 * a * c) ** 0.5) / (2 * a)  # The other root
+    return (ans1, ans2)
+"""
 
 ASSIGNMENT = Assignment(
     id="A6",
@@ -15,112 +18,74 @@ ASSIGNMENT = Assignment(
     questions=(
         Question(
             "Q1",
-            "Convert an array to integers",
+            "Slice a collection",
             (
+                Case("Q1.1", args=([1, 2, 3, 4, 5], 1, -2), checks=(Equals([2, 3]),)),
                 Case(
-                    "Q1.1",
-                    args=(np.array([2.2, 4.8, 0.9, 3.0]),),
-                    checks=(Equals(np.array([2, 4, 0, 3])), DTypeIs(int)),
+                    "Q1.2",
+                    kwargs={"c": "abcdefghi", "start": -4, "stop": 2, "step": -1},
+                    checks=(Equals("fed"),),
                 ),
+                Case("Q1.3", args=([1, 2, 3],), checks=(Equals([1, 2, 3]),)),
             ),
         ),
         Question(
             "Q2",
-            "Compute sphere volumes and surface areas",
+            "Find common and unique set elements",
             (
                 Case(
                     "Q2.1",
-                    args=([4.4, 3.2, 8.3],),
-                    checks=(
-                        Approx(
-                            np.array(
-                                [
-                                    [356.8179048, 243.28493509],
-                                    [137.25827743, 128.67963509],
-                                    [2395.09578482, 865.69727162],
-                                ]
-                            )
-                        ),
-                    ),
+                    args=([1, 2, 3], [2, 3, 4]),
+                    checks=(Equals(({2, 3}, {1, 4})),),
+                ),
+                Case(
+                    "Q2.2",
+                    args=([1, 1, 2], [2, 3, 3]),
+                    checks=(Equals(({2}, {1, 3})),),
                 ),
             ),
         ),
         Question(
             "Q3",
-            "Split a two-dimensional array",
+            "Correct function formatting",
             (
                 Case(
                     "Q3.1",
-                    args=(np.array([[0, 1, 2, 6, 7], [3, 4, 5, 8, 9]]), (1, 3)),
-                    checks=(
-                        Equals(
-                            [
-                                [np.array([[0, 1, 2]]), np.array([[6, 7]])],
-                                [np.array([[3, 4, 5]]), np.array([[8, 9]])],
-                            ]
-                        ),
-                    ),
+                    args=(1, -3, 2),
+                    checks=(Approx((2, 1)), SourceEquals(_FORMATTED_Q3)),
                 ),
             ),
         ),
         Question(
             "Q4",
-            "Count values relative to a threshold",
+            "Handle multiplication errors",
             (
-                Case(
-                    "Q4.1",
-                    args=([[4, 6, 2], [5, 4, 7]], 5),
-                    checks=(Equals((3, 1, 2)), AvoidsSyntax(ast.For, "a for loop")),
-                ),
+                Case("Q4.1", args=(2, 5), checks=(Equals(10),)),
+                Case("Q4.2", args=("ab", 3), checks=(Equals("ababab"),)),
+                Case("Q4.3", args=("abcd", [1, 2, 3]), checks=(Equals(None),)),
             ),
         ),
         Question(
             "Q5",
-            "Normalize an array",
+            "Multiply one to four integers",
             (
-                Case(
-                    "Q5.1",
-                    args=([[1, 4, -2], [-2, 0, 1]],),
-                    checks=(
-                        Approx(np.array([[0.5, 1.0, 0.0], [0.0, 1.0 / 3.0, 0.5]])),
-                    ),
-                ),
+                Case("Q5.1", args=(1, 2, 3), checks=(Equals(6),)),
+                Case("Q5.2", args=(3, 3), checks=(Equals(9),)),
+                Case("Q5.3", args=(2,), checks=(Equals(2),)),
+                Case("Q5.4", args=(1, 2, 3, 4, 5), checks=(Raises(TypeError),)),
             ),
         ),
         Question(
             "Q6",
-            "Find column maxima and minima",
+            "Add a structured docstring",
             (
                 Case(
                     "Q6.1",
-                    args=(
-                        np.array(
-                            [[3, 5, 2, 4], [2, 6, 1, 5], [2, 4, 4, 8], [1, 1, 5, 3]]
-                        ),
+                    args=(3, 4),
+                    checks=(
+                        Approx(5),
+                        DocstringContains(("Parameters", "Returns", "a : float")),
                     ),
-                    checks=(Equals(np.array([[3, 6, 5, 8], [1, 1, 1, 3]])),),
-                ),
-            ),
-        ),
-        Question(
-            "Q7",
-            "Stack arrays when exactly one direction is feasible",
-            (
-                Case(
-                    "Q7.1",
-                    args=(np.array([1, 2, 3]), np.array([[4, 5, 6], [7, 8, 9]])),
-                    checks=(Equals(np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])),),
-                ),
-            ),
-        ),
-        Question(
-            "Q8",
-            "Sum even array values",
-            (
-                Case(
-                    "Q8.1",
-                    args=(np.array([[4, 3, 7], [2, 6, 9], [0, -2, 1]]),),
-                    checks=(Equals(10), AvoidsSyntax(ast.For, "a for loop")),
                 ),
             ),
         ),

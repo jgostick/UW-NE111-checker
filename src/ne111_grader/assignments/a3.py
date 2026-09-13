@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from ..checks import Equals, LengthIs, Raises, TypeIs
+from ..checks import Equals, Raises, Silent
 from ..models import Assignment, Case, Question
 
 ASSIGNMENT = Assignment(
@@ -10,127 +10,86 @@ ASSIGNMENT = Assignment(
     title="Assignment 3",
     questions=(
         Question(
-            "Q1",
-            "Count letters in a string",
-            (
-                Case("Q1.1", args=("abcEDEF111",), checks=(Equals(7),)),
-                Case("Q1.2", args=("abc EDEF111",), checks=(Equals(7),)),
-                Case("Q1.3", args=("abc EDEF111 **",), checks=(Equals(7),)),
+            id="Q1",
+            title="Check whether three values are increasing",
+            cases=(
+                Case("Q1.1", args=(2, 3, 5), checks=(Equals(True),)),
+                Case("Q1.2", args=(4, 3, 6), checks=(Equals(False), Silent())),
+                Case("Q1.3", args=("a", 1, 3), checks=(Raises(TypeError),)),
             ),
         ),
         Question(
-            "Q2",
-            "Count non-space characters",
-            (
-                Case("Q2.1", args=("hello world",), checks=(Equals(10),)),
-                Case("Q2.2", args=("Dear World, Hello!",), checks=(Equals(16),)),
-                Case("Q2.3", args=(11,), checks=(Raises((AttributeError, TypeError)),)),
+            id="Q2",
+            title="Check whether water is liquid",
+            cases=(
+                Case("Q2.1", args=(50,), checks=(Equals(True),)),
+                Case("Q2.2", args=(110,), checks=(Equals(False),)),
+                Case("Q2.3", args=(0,), checks=(Equals(True),)),
+                Case("Q2.4", args=(-11,), checks=(Equals(False),)),
             ),
         ),
         Question(
-            "Q3",
-            "Validate a password",
-            (
-                Case("Q3.1", args=("password",), checks=(Equals(False),)),
-                Case("Q3.2", args=("Passw0rd!",), checks=(Equals(True),)),
+            id="Q3",
+            title="Apply a relational operator",
+            cases=(
+                Case("Q3.1", args=(1, 2, "=="), checks=(Equals(False),)),
+                Case("Q3.2", args=(1, 2, ">"), checks=(Equals(False),)),
+                Case("Q3.3", args=(1, 2, "<="), checks=(Equals(True),)),
             ),
         ),
         Question(
-            "Q4",
-            "Check an email domain",
-            (
-                Case(
-                    "Q4.1",
-                    args=("bob@gmail.com", "hotmail.com"),
-                    checks=(Equals(False),),
-                ),
-                Case(
-                    "Q4.2",
-                    args=("bob@gmail.com", "gmail.com"),
-                    checks=(Equals(True),),
-                ),
+            id="Q4",
+            title="Count even values in a list",
+            cases=(
+                Case("Q4.1", args=([1, 2, 4, 11],), checks=(Equals(2),)),
+                Case("Q4.2", args=([1, 2, 4, "11"],), checks=(Raises(TypeError),)),
             ),
         ),
         Question(
-            "Q5",
-            "Filter filenames by extension",
-            (
-                Case(
-                    "Q5.1",
-                    args=(["file1.txt", "test.csv"], "csv"),
-                    checks=(Equals(["test.csv"]),),
-                ),
-                Case(
-                    "Q5.2",
-                    args=(["file1.txt", "test.csv", "blob.csv"], "csv"),
-                    checks=(Equals(["test.csv", "blob.csv"]),),
-                ),
+            id="Q5",
+            title="Check whether a key is in a dictionary",
+            cases=(
+                Case("Q5.1", args=({"a": 1, "b": 2}, "a"), checks=(Equals(True),)),
+                Case("Q5.2", args=({"a": 1, "b": 2}, "c"), checks=(Equals(False),)),
                 Case(
                     "Q5.3",
-                    args=(["file1.txt", "test.csv", "blob.csv"], "py"),
-                    checks=(Equals([]),),
+                    args=(1, "c"),
+                    checks=(Raises((AttributeError, TypeError)),),
+                ),
+                Case(
+                    "Q5.4",
+                    args=([1, 2], "c"),
+                    checks=(Raises((AttributeError, TypeError)),),
                 ),
             ),
         ),
         Question(
-            "Q6",
-            "Compare two strings",
-            (
-                Case("Q6.1", args=("a", "b"), checks=(Equals(True),)),
-                Case("Q6.2", args=("c", "b"), checks=(Equals(False),)),
+            id="Q6",
+            title="Check whether a value is a number",
+            cases=(
+                Case("Q6.1", args=(1,), checks=(Equals(True),)),
+                Case("Q6.2", args=(2.2,), checks=(Equals(True),)),
+                Case("Q6.3", args=("1",), checks=(Equals(False),)),
+                Case("Q6.4", args=(False,), checks=(Equals(False),)),
+                Case("Q6.5", args=([1, 2],), checks=(Equals(False),)),
             ),
         ),
         Question(
-            "Q7",
-            "Join a list of strings",
-            (
-                Case(
-                    "Q7.1",
-                    args=(["one", "two", "three"],),
-                    checks=(Equals("onetwothree"),),
-                ),
-                Case(
-                    "Q7.2",
-                    args=(["foo", " ", "bar"],),
-                    checks=(Equals("foo bar"),),
-                ),
-                Case(
-                    "Q7.3",
-                    args=(["foo", [], "bar"],),
-                    checks=(Raises(TypeError),),
-                ),
+            id="Q7",
+            title="Check whether a list contains an integer",
+            cases=(
+                Case("Q7.1", args=([2.2, "a", 4],), checks=(Equals(True),)),
+                Case("Q7.2", args=([2.2, "a", 4.0],), checks=(Equals(False),)),
+                Case("Q7.3", args=(20,), checks=(Raises(TypeError),)),
             ),
         ),
         Question(
-            "Q8",
-            "Convert key-value text to a dictionary",
-            (
-                Case(
-                    "Q8.1",
-                    args=("key1:value2;key2:value2",),
-                    checks=(Equals({"key1": "value2", "key2": "value2"}),),
-                ),
-                Case(
-                    "Q8.2",
-                    args=("key1:value2,key2:value2",),
-                    checks=(Raises(ValueError),),
-                ),
-            ),
-        ),
-        Question(
-            "Q9",
-            "Encrypt and decrypt messages",
-            (
-                Case(
-                    "Q9.1",
-                    args=("test", 2, "encrypt"),
-                    checks=(LengthIs(12), TypeIs(str)),
-                ),
-                Case(
-                    "Q9.2",
-                    args=("tABeCDsEFtGG", 2, "decrypt"),
-                    checks=(Equals("test"),),
-                ),
+            id="Q8",
+            title="Check whether a list is ordered",
+            cases=(
+                Case("Q8.1", args=([1, 2, 4, 3],), checks=(Equals(False),)),
+                Case("Q8.2", args=([1, 2, 3, 4],), checks=(Equals(True),)),
+                Case("Q8.3", args=([1, 2, "3"],), checks=(Raises(TypeError),)),
             ),
         ),
     ),

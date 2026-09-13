@@ -1,49 +1,48 @@
+"""Integration coverage for the notebook-based Assignment 1."""
+
 from __future__ import annotations
 
-import textwrap
+import json
 
 from ne111_grader.isolated import run_question_isolated, run_question_source
 from ne111_grader.registry import get_assignment
 
-REFERENCE = """
-def A1Q1(x):
-    return float(x)
 
-def A1Q2(x):
-    return int(float(x))
-
-def A1Q3(x, y):
-    return x % y
-
-def A1Q4(x):
-    from math import modf
-    return modf(float(x))
-
-def A1Q5(x):
-    return str(type(x))
-
-def A1Q6(x, y):
-    return x + y
-
-def A1Q7(d, k, v):
-    d[k] = v
-    return d
-
-def A1Q8(values, value):
-    values.remove(value)
-    return values
-
-def A1Q9(values):
-    return values[:len(values) // 2]
-
-def A1Q10(values):
-    return max(values) - min(values)
-"""
+def _notebook(cells: list[str]) -> bytes:
+    return json.dumps(
+        {
+            "nbformat": 4,
+            "nbformat_minor": 5,
+            "metadata": {},
+            "cells": [
+                {"cell_type": "code", "metadata": {}, "source": source}
+                for source in cells
+            ],
+        }
+    ).encode()
 
 
-def test_reference_submission_passes_all_public_cases(tmp_path) -> None:
-    submission = tmp_path / "A1.py"
-    submission.write_text(textwrap.dedent(REFERENCE), encoding="utf-8")
+REFERENCE_CELLS = [
+    "# A1Q1\nanswer = a % b",
+    '# A1Q2\nanswer = greeting + " " + target',
+    "# A1Q3\nx = starting_x\nx = x * 5 - 3\nanswer = x",
+    "# A1Q4\nx, y = y, x\nanswer = (x, y)",
+    "# A1Q5\nanswer = (9 / 5) * celsius + 32",
+    "# A1Q6\nimport math\nanswer = (math.ceil(ceiling_value), math.floor(floor_value), math.log10(logarithm_value))",
+    "# A1Q7\nanswer = number ** (1 / root)",
+    "# A1Q8\nimport math\nanswer = (math.pi * radius**2, 2 * math.pi * radius)",
+    "# A1Q9\nanswer = (type(integer_value).__name__, type(float_value).__name__, type(text_value).__name__, type(boolean_value).__name__, int(text_value), float(text_value))",
+    "# A1Q10\nanswer = (dividend / divisor, dividend // divisor, dividend % divisor)",
+    "# A1Q11\nbase = 3\nexponent = 4\npower_result = base**exponent\nmultiplication_result = base * base * base * base\nanswer = (power_result, multiplication_result, power_result == multiplication_result)",
+    "# A1Q12\na, b, c = 2, 3, 4\nx = y = z = 5\nanswer = (a, b, c, x, y, z, a + b + c, x * y * z)",
+    "# A1Q13\nanswer = (2 + 3 * 4, (2 + 3) * 4, 10 - 6 / 2, (10 - 6) / 2)",
+    "# A1Q14\nanswer = (positive_num + negative_num, positive_num - negative_num, positive_num * negative_num, positive_num / negative_num, abs(negative_num))",
+]
+
+
+def test_reference_notebook_passes_all_public_cases(tmp_path) -> None:
+    submission = tmp_path / "A1.ipynb"
+    submission.write_bytes(_notebook(REFERENCE_CELLS))
     assignment = get_assignment("A1")
 
     results = [
@@ -54,24 +53,22 @@ def test_reference_submission_passes_all_public_cases(tmp_path) -> None:
     assert all(result.passed for result in results)
 
 
-def test_missing_function_is_reported(tmp_path) -> None:
-    submission = tmp_path / "A1.py"
-    submission.write_text("def something_else():\n    pass\n", encoding="utf-8")
+def test_missing_question_cell_is_reported(tmp_path) -> None:
+    submission = tmp_path / "A1.ipynb"
+    submission.write_bytes(_notebook(["# A1Q2\nanswer = greeting + target"]))
 
     result = run_question_isolated("A1", "Q1", submission)
 
     assert not result.passed
-    assert "A1Q1 was not found" in result.cases[0].checks[0].message
+    assert "No code cell is tagged # A1Q1" in result.cases[0].checks[0].message
 
 
-def test_uploaded_source_can_have_any_python_filename() -> None:
-    source = b"def A1Q1(value):\n    return float(value)\n"
-
+def test_uploaded_notebook_can_have_any_filename() -> None:
     result = run_question_source(
         "A1",
         "Q1",
-        source,
-        filename="student_12345_submission.py",
+        _notebook(["# A1Q1\nanswer = a % b"]),
+        filename="student_12345_submission.ipynb",
     )
 
     assert result.passed

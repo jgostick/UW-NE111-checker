@@ -1,15 +1,30 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 from pathlib import Path
 
 from streamlit.testing.v1 import AppTest
 
 
 def test_student_app_runs_a_question(monkeypatch, tmp_path) -> None:
-    submission = tmp_path / "my_solution.py"
+    submission = tmp_path / "my_solution.ipynb"
     submission.write_text(
-        "def A1Q1(value):\n    return float(value)\n", encoding="utf-8"
+        json.dumps(
+            {
+                "nbformat": 4,
+                "nbformat_minor": 5,
+                "metadata": {},
+                "cells": [
+                    {
+                        "cell_type": "code",
+                        "metadata": {},
+                        "source": "# A1Q1\nanswer = a % b",
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
     )
     monkeypatch.setenv("NE111_GRADER_ASSIGNMENT", "A1")
     monkeypatch.setenv("NE111_GRADER_SUBMISSION", str(submission))
@@ -22,5 +37,5 @@ def test_student_app_runs_a_question(monkeypatch, tmp_path) -> None:
 
     assert not app.exception
     assert not app.error
-    assert len(app.tabs) == 10
-    assert len(app.success) == 4
+    assert len(app.tabs) == 14
+    assert len(app.success) == 2

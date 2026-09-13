@@ -1,140 +1,137 @@
-"""Public checks for Assignment 1."""
+"""Public checks for notebook-based Assignment 1."""
 
 from __future__ import annotations
 
-from ..checks import Approx, Equals, Raises, Silent
+from ..checks import Approx, Equals, UsesSymbol
 from ..models import Assignment, Case, Question
 
 ASSIGNMENT = Assignment(
     id="A1",
     title="Assignment 1",
+    notebook_submission=True,
     questions=(
         Question(
             id="Q1",
-            title="Convert a string to a float",
+            title="Remainder",
+            input_names=("a", "b"),
             cases=(
-                Case("Q1.1", args=("1",), checks=(Approx(1.0), Silent())),
-                Case("Q1.2", args=("2.1",), checks=(Approx(2.1),)),
-                Case("Q1.3", args=(11,), checks=(Approx(11.0),)),
+                Case("Q1.1", args=(17, 4), checks=(Equals(1),)),
+                Case("Q1.2", args=(7.5, 2.0), checks=(Approx(1.5),)),
             ),
         ),
         Question(
             id="Q2",
-            title="Convert a string to an int",
+            title="Build a greeting",
+            input_names=("greeting", "target"),
             cases=(
-                Case("Q2.1", args=("1",), checks=(Equals(1),)),
-                Case("Q2.2", args=("2.1",), checks=(Equals(2),)),
-                Case("Q2.3", args=(11,), checks=(Equals(11),)),
+                Case("Q2.1", args=("Hello", "World"), checks=(Equals("Hello World"),)),
             ),
         ),
         Question(
             id="Q3",
-            title="Find the remainder of division",
-            cases=(
-                Case("Q3.1", args=(4, 3), checks=(Equals(1),)),
-                Case("Q3.2", args=(3.4, 1.1), checks=(Approx(0.1),)),
-            ),
+            title="Reassign a variable",
+            input_names=("starting_x",),
+            cases=(Case("Q3.1", args=(10,), checks=(Equals(47),)),),
         ),
         Question(
             id="Q4",
-            title="Find whole and decimal portions",
-            cases=(
-                Case("Q4.1", args=(1.3,), checks=(Approx((0.3, 1)),)),
-                Case("Q4.2", args=(22.0,), checks=(Approx((0, 22)),)),
-                Case("Q4.3", args=(12,), checks=(Approx((0, 12)),)),
-            ),
+            title="Swap two values",
+            input_names=("x", "y"),
+            cases=(Case("Q4.1", args=(10, 20), checks=(Equals((20, 10)),)),),
         ),
         Question(
             id="Q5",
-            title="Find the type and convert it to a string",
-            cases=(
-                Case("Q5.1", args=(1,), checks=(Equals("<class 'int'>"),)),
-                Case("Q5.2", args=(3.3,), checks=(Equals("<class 'float'>"),)),
-                Case("Q5.3", args=(0.5j,), checks=(Equals("<class 'complex'>"),)),
-            ),
+            title="Convert Celsius to Fahrenheit",
+            input_names=("celsius",),
+            cases=(Case("Q5.1", args=(22.0,), checks=(Approx(71.6),)),),
         ),
         Question(
             id="Q6",
-            title="Join two lists",
+            title="Use the math library",
+            input_names=("ceiling_value", "floor_value", "logarithm_value"),
             cases=(
                 Case(
                     "Q6.1",
-                    args=([1, 2, 3], [4, 5, 6]),
-                    checks=(Equals([1, 2, 3, 4, 5, 6]),),
-                ),
-                Case(
-                    "Q6.2",
-                    args=(["a", "b"], ["c"]),
-                    checks=(Equals(["a", "b", "c"]),),
-                ),
-                Case(
-                    "Q6.3",
-                    args=(["a", "b"], "c"),
-                    checks=(Raises(TypeError),),
+                    args=(4.3, 4.8, 1000),
+                    checks=(Equals((5, 4, 3.0)), UsesSymbol("math")),
                 ),
             ),
         ),
         Question(
             id="Q7",
-            title="Insert items into a dictionary",
-            cases=(
-                Case("Q7.1", args=({}, "k", 10), checks=(Equals({"k": 10}),)),
-                Case(
-                    "Q7.2",
-                    args=({"a": 1}, "b", 2),
-                    checks=(Equals({"a": 1, "b": 2}),),
-                ),
-                Case(
-                    "Q7.3",
-                    args=({"a": 1}, "a", 2),
-                    checks=(Equals({"a": 2}),),
-                ),
-            ),
+            title="Calculate an nth root",
+            input_names=("number", "root"),
+            cases=(Case("Q7.1", args=(32, 5), checks=(Approx(2.0),)),),
         ),
         Question(
             id="Q8",
-            title="Remove a value from a list",
+            title="Circle area and circumference",
+            input_names=("radius",),
             cases=(
-                Case("Q8.1", args=([1, 2, 3], 2), checks=(Equals([1, 3]),)),
                 Case(
-                    "Q8.2",
-                    args=([1, 2, 3, 2], 2),
-                    checks=(Equals([1, 3, 2]),),
-                ),
-                Case(
-                    "Q8.3",
-                    args=([1, 2, 3], 5),
-                    checks=(Raises(ValueError),),
+                    "Q8.1",
+                    args=(2,),
+                    checks=(Approx((4 * 3.141592653589793, 4 * 3.141592653589793)),),
                 ),
             ),
         ),
         Question(
             id="Q9",
-            title="Extract a sub-list from a list",
+            title="Types and conversion",
+            input_names=(
+                "integer_value",
+                "float_value",
+                "text_value",
+                "boolean_value",
+            ),
             cases=(
                 Case(
                     "Q9.1",
-                    args=([1, 2, 3, 4, 5],),
-                    checks=(Equals([1, 2]),),
-                ),
-                Case("Q9.2", args=([1, 2, 3, 4],), checks=(Equals([1, 2]),)),
-                Case(
-                    "Q9.3",
-                    args=([6, 5, 4, 3, 2, 1],),
-                    checks=(Equals([6, 5, 4]),),
+                    args=(42, 3.14, "100", True),
+                    checks=(Equals(("int", "float", "str", "bool", 100, 100.0)),),
                 ),
             ),
         ),
         Question(
             id="Q10",
-            title="Scan and process all list values",
+            title="Division operators",
+            input_names=("dividend", "divisor"),
+            cases=(Case("Q10.1", args=(17, 4), checks=(Approx((4.25, 4, 1)),)),),
+        ),
+        Question(
+            id="Q11",
+            title="Exponents and multiplication",
             cases=(
-                Case("Q10.1", args=([1, 2, 3, 4, 5],), checks=(Equals(4),)),
-                Case("Q10.2", args=([4, 3, -1, 10],), checks=(Equals(11),)),
                 Case(
-                    "Q10.3",
-                    args=([4, "3", None, 10],),
-                    checks=(Raises(TypeError),),
+                    "Q11.1",
+                    checks=(Equals((81, 81, True)), UsesSymbol("exponent")),
+                ),
+            ),
+        ),
+        Question(
+            id="Q12",
+            title="Multiple assignment",
+            cases=(
+                Case(
+                    "Q12.1",
+                    checks=(Equals((2, 3, 4, 5, 5, 5, 9, 125)),),
+                ),
+            ),
+        ),
+        Question(
+            id="Q13",
+            title="Operator precedence",
+            cases=(Case("Q13.1", checks=(Approx((14, 20, 7, 2)),)),),
+        ),
+        Question(
+            id="Q14",
+            title="Negative numbers",
+            input_names=("positive_num", "negative_num"),
+            cases=(
+                Case(
+                    "Q14.1",
+                    args=(10, -7),
+                    checks=(Approx((3, 17, -70, -10 / 7, 7)),),
                 ),
             ),
         ),

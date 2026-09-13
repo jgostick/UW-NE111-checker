@@ -10,10 +10,11 @@ from .assignments.a5 import ASSIGNMENT as A5
 from .assignments.a6 import ASSIGNMENT as A6
 from .assignments.a7 import ASSIGNMENT as A7
 from .assignments.a8 import ASSIGNMENT as A8
+from .assignments.a9 import ASSIGNMENT as A9
 from .models import Assignment
 
 _ASSIGNMENTS = {
-    assignment.id: assignment for assignment in (A1, A2, A3, A4, A5, A6, A7, A8)
+    assignment.id: assignment for assignment in (A1, A2, A3, A4, A5, A6, A7, A8, A9)
 }
 
 

@@ -65,10 +65,12 @@ class Assignment:
     title: str
     questions: tuple[Question, ...]
     fixtures: tuple[TextFixture, ...] = ()
+    notebook_submission: bool = False
 
     @property
     def expected_filename(self) -> str:
-        return f"{self.id}.py"
+        suffix = "ipynb" if self.notebook_submission else "py"
+        return f"{self.id}.{suffix}"
 
     def question(self, question_id: str) -> Question:
         for question in self.questions:

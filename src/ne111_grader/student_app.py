@@ -22,6 +22,14 @@ def _format_call(
     return f"{function_name}({', '.join(arguments)})"
 
 
+def _format_notebook_inputs(question, case) -> str:
+    values = [
+        f"{name} = {value!r}" for name, value in zip(question.input_names, case.args)
+    ]
+    values.extend(f"{key} = {value!r}" for key, value in case.kwargs.items())
+    return "\n".join(values) if values else "No checker-supplied inputs"
+
+
 assignment = get_assignment(os.environ.get("NE111_GRADER_ASSIGNMENT", "A1"))
 default_submission = os.environ.get(
     "NE111_GRADER_SUBMISSION",
@@ -34,8 +42,12 @@ st.caption("Each question runs in a separate process with a five-second timeout.
 
 uploaded_submission = st.file_uploader(
     "Submission file",
-    type=("py", "ipynb"),
-    help="Choose a Python file or a notebook using the assignment's submission format.",
+    type=("ipynb",) if assignment.notebook_submission else ("py",),
+    help=(
+        "Choose the Jupyter notebook required by this assignment."
+        if assignment.notebook_submission
+        else "Choose a Python file containing the assignment functions."
+    ),
 )
 configured_submission = Path(default_submission).expanduser()
 
@@ -59,7 +71,11 @@ else:
     submission_key = "none"
     submission_label = "No file selected"
     submission_path = None
-    st.info("Browse for your Python file or Jupyter notebook submission.")
+    st.info(
+        "Browse for your Jupyter notebook submission."
+        if assignment.notebook_submission
+        else "Browse for the Python file containing your assignment functions."
+    )
 
 tabs = st.tabs([question.id for question in assignment.questions])
 for tab, question in zip(tabs, assignment.questions):
@@ -68,13 +84,21 @@ for tab, question in zip(tabs, assignment.questions):
         function_name = f"{assignment.id}{question.id}"
         for case in question.cases:
             st.code(
-                _format_call(function_name, case.args, dict(case.kwargs)),
+                (
+                    _format_notebook_inputs(question, case)
+                    if assignment.notebook_submission
+                    else _format_call(function_name, case.args, dict(case.kwargs))
+                ),
                 language="python",
             )
 
         state_key = f"result-{assignment.id}-{question.id}-{submission_key}"
         if st.button(
-            f"Run {function_name}",
+            (
+                f"Run {function_name} cell"
+                if assignment.notebook_submission
+                else f"Run {function_name}"
+            ),
             key=f"run-{question.id}",
             disabled=uploaded_source is None and submission_path is None,
         ):

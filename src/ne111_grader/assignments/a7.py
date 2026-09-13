@@ -6,7 +6,7 @@ import ast
 
 import numpy as np
 
-from ..checks import Approx, AvoidsCall, AvoidsSyntax, Equals, UsesSymbol
+from ..checks import Approx, AvoidsSyntax, DTypeIs, Equals
 from ..models import Assignment, Case, Question
 
 ASSIGNMENT = Assignment(
@@ -15,136 +15,112 @@ ASSIGNMENT = Assignment(
     questions=(
         Question(
             "Q1",
-            "Check whether arrays can broadcast",
+            "Convert an array to integers",
             (
                 Case(
                     "Q1.1",
-                    args=(np.ones((3, 3)), np.ones((1, 3))),
-                    checks=(Equals(True),),
-                ),
-                Case(
-                    "Q1.2",
-                    args=(np.ones((3, 3)), np.ones((1, 4))),
-                    checks=(Equals(False),),
-                ),
-                Case("Q1.3", args=(1.0, np.ones((1, 4))), checks=(Equals(True),)),
-                Case(
-                    "Q1.4",
-                    args=(np.ones((3, 3)), np.ones((4,))),
-                    checks=(Equals(False),),
+                    args=(np.array([2.2, 4.8, 0.9, 3.0]),),
+                    checks=(Equals(np.array([2, 4, 0, 3])), DTypeIs(int)),
                 ),
             ),
         ),
         Question(
             "Q2",
-            "Apply a NumPy universal function",
+            "Compute sphere volumes and surface areas",
             (
                 Case(
                     "Q2.1",
-                    args=(np.arange(4), np.arange(4, 8), "+"),
-                    checks=(Equals(np.array([4, 6, 8, 10])),),
-                ),
-                Case(
-                    "Q2.2",
-                    args=(np.arange(4), np.arange(4, 8), "*"),
-                    checks=(Equals(np.array([0, 5, 12, 21])),),
-                ),
-                Case(
-                    "Q2.3",
-                    args=(np.arange(4), np.arange(4, 8), "//"),
+                    args=([4.4, 3.2, 8.3],),
                     checks=(
-                        Equals(np.array([0, 0, 0, 0])),
-                        UsesSymbol("floor_divide"),
+                        Approx(
+                            np.array(
+                                [
+                                    [356.8179048, 243.28493509],
+                                    [137.25827743, 128.67963509],
+                                    [2395.09578482, 865.69727162],
+                                ]
+                            )
+                        ),
                     ),
                 ),
             ),
         ),
         Question(
             "Q3",
-            "Find a two-dimensional bounding box",
+            "Split a two-dimensional array",
             (
                 Case(
                     "Q3.1",
-                    args=(np.array([[0.3, 0.2], [0.8, 0.3], [0.4, 0.7], [0.2, 0.5]]),),
-                    checks=(Approx(((0.2, 0.2), (0.8, 0.7))),),
+                    args=(np.array([[0, 1, 2, 6, 7], [3, 4, 5, 8, 9]]), (1, 3)),
+                    checks=(
+                        Equals(
+                            [
+                                [np.array([[0, 1, 2]]), np.array([[6, 7]])],
+                                [np.array([[3, 4, 5]]), np.array([[8, 9]])],
+                            ]
+                        ),
+                    ),
                 ),
             ),
         ),
         Question(
             "Q4",
-            "Normalize a vector",
+            "Count values relative to a threshold",
             (
                 Case(
                     "Q4.1",
-                    args=([4.1, 3.3, 5.0, -2.0],),
-                    checks=(
-                        Approx(
-                            np.array([0.544493, 0.43825, 0.664016, -0.265606]),
-                            rtol=1e-5,
-                        ),
-                    ),
+                    args=([[4, 6, 2], [5, 4, 7]], 5),
+                    checks=(Equals((3, 1, 2)), AvoidsSyntax(ast.For, "a for loop")),
                 ),
             ),
         ),
         Question(
             "Q5",
-            "Multiply a matrix and vector",
+            "Normalize an array",
             (
                 Case(
                     "Q5.1",
-                    args=(np.arange(16).reshape((4, 4)), np.arange(100, 104)),
-                    checks=(Equals(np.array([614, 2238, 3862, 5486])),),
-                ),
-                Case(
-                    "Q5.2",
-                    args=(
-                        np.arange(16).reshape((4, 4)),
-                        np.arange(100, 104).reshape((4, 1)),
+                    args=([[1, 4, -2], [-2, 0, 1]],),
+                    checks=(
+                        Approx(np.array([[0.5, 1.0, 0.0], [0.0, 1.0 / 3.0, 0.5]])),
                     ),
-                    checks=(Equals(np.array([614, 2238, 3862, 5486])),),
                 ),
             ),
         ),
         Question(
             "Q6",
-            "Compute a matrix trace with boolean indexing",
+            "Find column maxima and minima",
             (
                 Case(
                     "Q6.1",
-                    args=(np.arange(16).reshape((4, 4)),),
-                    checks=(Equals(30),),
-                ),
-                Case(
-                    "Q6.2",
-                    args=(np.arange(16).reshape((4, 4)),),
-                    checks=(
-                        AvoidsCall("trace"),
-                        AvoidsSyntax(ast.For, "a for loop"),
+                    args=(
+                        np.array(
+                            [[3, 5, 2, 4], [2, 6, 1, 5], [2, 4, 4, 8], [1, 1, 5, 3]]
+                        ),
                     ),
+                    checks=(Equals(np.array([[3, 6, 5, 8], [1, 1, 1, 3]])),),
                 ),
             ),
         ),
         Question(
             "Q7",
-            "Identify a triangular matrix",
+            "Stack arrays when exactly one direction is feasible",
             (
                 Case(
                     "Q7.1",
-                    args=(
-                        np.array(
-                            [[1, 2, 3, 4], [0, 2, 3, 4], [0, 0, 3, 4], [0, 0, 0, 4]]
-                        ),
-                    ),
-                    checks=(Equals(True),),
+                    args=(np.array([1, 2, 3]), np.array([[4, 5, 6], [7, 8, 9]])),
+                    checks=(Equals(np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])),),
                 ),
+            ),
+        ),
+        Question(
+            "Q8",
+            "Sum even array values",
+            (
                 Case(
-                    "Q7.2",
-                    args=(
-                        np.array(
-                            [[1, 2, 3, 4], [3, 2, 3, 4], [3, 0, 3, 4], [1, 0, 1, 4]]
-                        ),
-                    ),
-                    checks=(Equals(False),),
+                    "Q8.1",
+                    args=(np.array([[4, 3, 7], [2, 6, 9], [0, -2, 1]]),),
+                    checks=(Equals(10), AvoidsSyntax(ast.For, "a for loop")),
                 ),
             ),
         ),

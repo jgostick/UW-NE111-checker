@@ -8,24 +8,24 @@ from ne111_grader.isolated import run_question_isolated
 from ne111_grader.registry import get_assignment
 
 SOURCES = {
-    "A3": """
-def A3Q1(value): return sum(character.isalpha() for character in value)
-def A3Q2(value): return len(value.replace(' ', ''))
-def A3Q3(password):
+    "A4": """
+def A4Q1(value): return sum(character.isalpha() for character in value)
+def A4Q2(value): return len(value.replace(' ', ''))
+def A4Q3(password):
     special = '!@#$%^&'
     return (any(c.isupper() for c in password)
             and any(c.islower() for c in password)
             and any(c.isdigit() for c in password)
             and any(c in special for c in password))
-def A3Q4(email, domain): return email.endswith(domain)
-def A3Q5(filenames, extension):
+def A4Q4(email, domain): return email.endswith(domain)
+def A4Q5(filenames, extension):
     extension = extension.removeprefix('.')
     return [name for name in filenames if name.endswith('.' + extension)]
-def A3Q6(a, b): return a < b
-def A3Q7(values): return ''.join(values)
-def A3Q8(value):
+def A4Q6(a, b): return a < b
+def A4Q7(values): return ''.join(values)
+def A4Q8(value):
     return dict(item.split(':') for item in value.split(';'))
-def A3Q9(message, number, mode):
+def A4Q9(message, number, mode):
     import random
     import string
     if mode == 'encrypt':
@@ -37,40 +37,40 @@ def A3Q9(message, number, mode):
         return message[::number + 1]
     raise ValueError('mode must be encrypt or decrypt')
 """,
-    "A4": """
-def A4Q1(filename):
+    "A5": """
+def A5Q1(filename):
     with open(filename) as file: return len(file.read().splitlines())
-def A4Q2(filename):
+def A5Q2(filename):
     with open(filename) as file: return len(file.read().split())
-def A4Q3(filename, value, repetitions):
+def A5Q3(filename, value, repetitions):
     with open(filename, 'w') as file:
         for _ in range(repetitions): file.write(value.strip('\\n') + '\\n')
-def A4Q4(filename, data):
+def A5Q4(filename, data):
     import pandas as pd
     if not filename.endswith('.csv'): filename += '.csv'
     pd.DataFrame(data).to_csv(filename, index=False)
-def A4Q5(filename):
+def A5Q5(filename):
     import pandas as pd
     if not filename.endswith('.csv'): filename += '.csv'
     return pd.read_csv(filename).to_dict(orient='list')
-def A4Q6(filename, value):
+def A5Q6(filename, value):
     with open(filename, 'a') as file: file.write('\\n' + value)
 """,
-    "A5": """
-def A5Q1(c, start=None, stop=None, step=None):
+    "A6": """
+def A6Q1(c, start=None, stop=None, step=None):
     return c[start:stop:step]
-def A5Q2(first, second):
+def A6Q2(first, second):
     first, second = set(first), set(second)
     return first & second, first ^ second
-def A5Q3(a, b=1, c=5):
+def A6Q3(a, b=1, c=5):
     ans1 = (-b + (b**2 - 4 * a * c) ** 0.5) / (2 * a)  # One root
     ans2 = (-b - (b**2 - 4 * a * c) ** 0.5) / (2 * a)  # The other root
     return (ans1, ans2)
-def A5Q4(a, b):
+def A6Q4(a, b):
     try: return a * b
     except TypeError: return None
-def A5Q5(a, b=1, c=1, d=1): return a * b * c * d
-def A5Q6(a, b, c=0):
+def A6Q5(a, b=1, c=1, d=1): return a * b * c * d
+def A6Q6(a, b, c=0):
     \"\"\"Compute a Euclidean length.
 
     Parameters
@@ -89,82 +89,82 @@ def A5Q6(a, b, c=0):
     \"\"\"
     return (a**2 + b**2 + c**2)**0.5
 """,
-    "A6": """
+    "A7": """
 import numpy as np
-def A6Q1(array): return np.asarray(array).astype(int)
-def A6Q2(radius):
+def A7Q1(array): return np.asarray(array).astype(int)
+def A7Q2(radius):
     radius = np.asarray(radius)
     return np.column_stack((4 / 3 * np.pi * radius**3, 4 * np.pi * radius**2))
-def A6Q3(array, split):
+def A7Q3(array, split):
     array = np.asarray(array); row, column = split
     return [[array[:row, :column], array[:row, column:]],
             [array[row:, :column], array[row:, column:]]]
-def A6Q4(array, threshold):
+def A7Q4(array, threshold):
     array = np.asarray(array)
     return ((array < threshold).sum(), (array == threshold).sum(),
             (array > threshold).sum())
-def A6Q5(array):
+def A7Q5(array):
     array = np.asarray(array)
     return (array - array.min()) / (array.max() - array.min())
-def A6Q6(array):
+def A7Q6(array):
     array = np.asarray(array)
     return np.vstack((array.max(axis=0), array.min(axis=0)))
-def A6Q7(first, second):
+def A7Q7(first, second):
     answers = []
     for function in (np.vstack, np.hstack):
         try: answers.append(function((first, second)))
         except ValueError: pass
     return answers[0] if len(answers) == 1 else None
-def A6Q8(array):
+def A7Q8(array):
     array = np.asarray(array)
     return array[array % 2 == 0].sum()
 """,
-    "A7": """
+    "A8": """
 import numpy as np
-def A7Q1(first, second):
+def A8Q1(first, second):
     try: np.broadcast_arrays(first, second); return True
     except ValueError: return False
-def A7Q2(first, second, symbol):
+def A8Q2(first, second, symbol):
     operations = {'+': np.add, '-': np.subtract, '*': np.multiply,
                   '/': np.divide, '//': np.floor_divide,
                   '%': np.mod, '**': np.power}
     return operations[symbol](first, second)
-def A7Q3(points):
+def A8Q3(points):
     points = np.asarray(points)
     return ((points[:, 0].min(), points[:, 1].min()),
             (points[:, 0].max(), points[:, 1].max()))
-def A7Q4(vector):
+def A8Q4(vector):
     vector = np.asarray(vector)
     return vector / np.linalg.norm(vector)
-def A7Q5(matrix, vector): return np.matmul(matrix, vector).flatten()
-def A7Q6(matrix):
+def A8Q5(matrix, vector): return np.matmul(matrix, vector).flatten()
+def A8Q6(matrix):
     matrix = np.asarray(matrix)
     mask = np.eye(matrix.shape[0], dtype=bool)
     return matrix[mask].sum()
-def A7Q7(matrix):
+def A8Q7(matrix):
     matrix = np.asarray(matrix)
     return np.allclose(matrix, np.triu(matrix)) or np.allclose(matrix, np.tril(matrix))
 """,
-    "A8": """
+    "A9": """
 import numpy as np
 import matplotlib.pyplot as plt
-def A8Q1(x, y):
+def A9Q1(x, y):
     figure, axes = plt.subplots(); axes.scatter(x, y); return figure, axes
-def A8Q2(*arrays):
+def A9Q2(*arrays):
     figure, axes = plt.subplots(1, len(arrays))
     for axis, array in zip(axes, arrays): axis.hist(array)
     return figure, axes
-def A8Q3(image):
+def A9Q3(image):
     figure, axes = plt.subplots(); axes.imshow(image); return figure, axes
-def A8Q4(figure, color): figure.set_facecolor(color); return figure
-def A8Q5(x, y):
+def A9Q4(figure, color): figure.set_facecolor(color); return figure
+def A9Q5(x, y):
     x, y = np.asarray(x), np.asarray(y)
     valid = (x >= 0) & (x <= 1) & (y >= 0) & (y <= 1)
     figure, axes = plt.subplots(); axes.scatter(x[valid], y[valid]); return figure, axes
 """,
 }
 
-EXPECTED_CASES = {"A3": 22, "A4": 6, "A5": 14, "A6": 8, "A7": 15, "A8": 9}
+EXPECTED_CASES = {"A4": 22, "A5": 6, "A6": 14, "A7": 8, "A8": 15, "A9": 9}
 
 
 @pytest.mark.parametrize("assignment_id", tuple(SOURCES))

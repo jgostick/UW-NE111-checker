@@ -2,74 +2,134 @@
 
 from __future__ import annotations
 
-from ..checks import CsvEquals, Equals, LastLineIs, TextFileEquals
-from ..models import Assignment, Case, Question, TextFixture
+from ..checks import Equals, LengthIs, Raises, TypeIs
+from ..models import Assignment, Case, Question
 
 ASSIGNMENT = Assignment(
     id="A4",
     title="Assignment 4",
-    fixtures=(
-        TextFixture("file.txt", "this\nis\na\n\n\nfile"),
-        TextFixture("data.csv", "x,y\n1,4\n2,5\n3,6"),
-    ),
     questions=(
         Question(
             "Q1",
-            "Count lines in a text file",
-            (Case("Q1.1", args=("file.txt",), checks=(Equals(6),)),),
+            "Count letters in a string",
+            (
+                Case("Q1.1", args=("abcEDEF111",), checks=(Equals(7),)),
+                Case("Q1.2", args=("abc EDEF111",), checks=(Equals(7),)),
+                Case("Q1.3", args=("abc EDEF111 **",), checks=(Equals(7),)),
+            ),
         ),
         Question(
             "Q2",
-            "Count words in a text file",
-            (Case("Q2.1", args=("file.txt",), checks=(Equals(4),)),),
+            "Count non-space characters",
+            (
+                Case("Q2.1", args=("hello world",), checks=(Equals(10),)),
+                Case("Q2.2", args=("Dear World, Hello!",), checks=(Equals(16),)),
+                Case("Q2.3", args=(11,), checks=(Raises((AttributeError, TypeError)),)),
+            ),
         ),
         Question(
             "Q3",
-            "Write repeated lines to a text file",
+            "Validate a password",
             (
-                Case(
-                    "Q3.1",
-                    args=("output.txt", "line", 3),
-                    checks=(
-                        Equals(None),
-                        TextFileEquals("output.txt", "line\nline\nline\n"),
-                    ),
-                ),
+                Case("Q3.1", args=("password",), checks=(Equals(False),)),
+                Case("Q3.2", args=("Passw0rd!",), checks=(Equals(True),)),
             ),
         ),
         Question(
             "Q4",
-            "Write columnar data to a CSV file",
+            "Check an email domain",
             (
                 Case(
                     "Q4.1",
-                    args=("output.csv", {"a": [9, 8, 7], "b": [6, 5, 4]}),
-                    checks=(
-                        Equals(None),
-                        CsvEquals("output.csv", {"a": [9, 8, 7], "b": [6, 5, 4]}),
-                    ),
+                    args=("bob@gmail.com", "hotmail.com"),
+                    checks=(Equals(False),),
+                ),
+                Case(
+                    "Q4.2",
+                    args=("bob@gmail.com", "gmail.com"),
+                    checks=(Equals(True),),
                 ),
             ),
         ),
         Question(
             "Q5",
-            "Read a CSV file into a dictionary",
+            "Filter filenames by extension",
             (
                 Case(
                     "Q5.1",
-                    args=("data",),
-                    checks=(Equals({"x": [1, 2, 3], "y": [4, 5, 6]}),),
+                    args=(["file1.txt", "test.csv"], "csv"),
+                    checks=(Equals(["test.csv"]),),
+                ),
+                Case(
+                    "Q5.2",
+                    args=(["file1.txt", "test.csv", "blob.csv"], "csv"),
+                    checks=(Equals(["test.csv", "blob.csv"]),),
+                ),
+                Case(
+                    "Q5.3",
+                    args=(["file1.txt", "test.csv", "blob.csv"], "py"),
+                    checks=(Equals([]),),
                 ),
             ),
         ),
         Question(
             "Q6",
-            "Append a line to a text file",
+            "Compare two strings",
+            (
+                Case("Q6.1", args=("a", "b"), checks=(Equals(True),)),
+                Case("Q6.2", args=("c", "b"), checks=(Equals(False),)),
+            ),
+        ),
+        Question(
+            "Q7",
+            "Join a list of strings",
             (
                 Case(
-                    "Q6.1",
-                    args=("file.txt", "new line"),
-                    checks=(Equals(None), LastLineIs("file.txt", "new line")),
+                    "Q7.1",
+                    args=(["one", "two", "three"],),
+                    checks=(Equals("onetwothree"),),
+                ),
+                Case(
+                    "Q7.2",
+                    args=(["foo", " ", "bar"],),
+                    checks=(Equals("foo bar"),),
+                ),
+                Case(
+                    "Q7.3",
+                    args=(["foo", [], "bar"],),
+                    checks=(Raises(TypeError),),
+                ),
+            ),
+        ),
+        Question(
+            "Q8",
+            "Convert key-value text to a dictionary",
+            (
+                Case(
+                    "Q8.1",
+                    args=("key1:value2;key2:value2",),
+                    checks=(Equals({"key1": "value2", "key2": "value2"}),),
+                ),
+                Case(
+                    "Q8.2",
+                    args=("key1:value2,key2:value2",),
+                    checks=(Raises(ValueError),),
+                ),
+            ),
+        ),
+        Question(
+            "Q9",
+            "Encrypt and decrypt messages",
+            (
+                Case(
+                    "Q9.1",
+                    args=("test", 2, "encrypt"),
+                    checks=(LengthIs(12), TypeIs(str)),
+                ),
+                Case(
+                    "Q9.2",
+                    args=("tABeCDsEFtGG", 2, "decrypt"),
+                    checks=(Equals("test"),),
                 ),
             ),
         ),
