@@ -21,17 +21,17 @@ ASSIGNMENT = Assignment(
         ),
         Question(
             id="Q2",
-            title="Build a greeting",
-            input_names=("greeting", "target"),
+            title="Operator precedence",
+            input_names=("a", "b", "c"),
             cases=(
-                Case("Q2.1", args=("Hello", "World"), checks=(Equals("Hello World"),)),
+                Case("Q2.1", args=(2, 3, 4), checks=(Equals(14),)),
             ),
         ),
         Question(
             id="Q3",
             title="Reassign a variable",
-            input_names=("starting_x",),
-            cases=(Case("Q3.1", args=(10,), checks=(Equals(47),)),),
+            input_names=("starting_value", "scale", "offset"),
+            cases=(Case("Q3.1", args=(10, 5, -3), checks=(Equals(47),)),),
         ),
         Question(
             id="Q4",
@@ -94,9 +94,9 @@ ASSIGNMENT = Assignment(
         ),
         Question(
             id="Q10",
-            title="Division operators",
-            input_names=("dividend", "divisor"),
-            cases=(Case("Q10.1", args=(17, 4), checks=(Approx((4.25, 4, 1)),)),),
+            title="Absolute difference",
+            input_names=("a", "b"),
+            cases=(Case("Q10.1", args=(17, 4), checks=(Equals(13),)),),
         ),
         Question(
             id="Q11",
