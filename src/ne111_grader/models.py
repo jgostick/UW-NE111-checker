@@ -50,6 +50,7 @@ class Question:
     id: str
     title: str
     cases: tuple[Case, ...]
+    input_names: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)

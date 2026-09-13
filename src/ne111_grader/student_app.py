@@ -34,8 +34,8 @@ st.caption("Each question runs in a separate process with a five-second timeout.
 
 uploaded_submission = st.file_uploader(
     "Submission file",
-    type=("py",),
-    help="Choose any Python file containing the assignment functions.",
+    type=("py", "ipynb"),
+    help="Choose a Python file or a notebook using the assignment's submission format.",
 )
 configured_submission = Path(default_submission).expanduser()
 
@@ -52,14 +52,14 @@ elif configured_submission.is_file():
     submission_label = configured_submission.name
     submission_path = configured_submission
     st.caption(
-        f"Using `{configured_submission}`. Browse for another Python file to replace it."
+        f"Using `{configured_submission}`. Browse for another submission to replace it."
     )
 else:
     uploaded_source = None
     submission_key = "none"
     submission_label = "No file selected"
     submission_path = None
-    st.info("Browse for the Python file containing your assignment functions.")
+    st.info("Browse for your Python file or Jupyter notebook submission.")
 
 tabs = st.tabs([question.id for question in assignment.questions])
 for tab, question in zip(tabs, assignment.questions):

@@ -13,8 +13,9 @@ import uuid
 from pathlib import Path
 
 from .models import Assignment, CaseResult, CheckResult, QuestionResult
+from .notebooks import NotebookFormatError, load_notebook
 from .registry import get_assignment
-from .runner import run_case
+from .runner import run_case, run_notebook_case
 
 RESULT_PREFIX = "NE111_GRADER_RESULT="
 
@@ -38,6 +39,20 @@ def _load_module(path: Path):
     return module
 
 
+def _notebook_inputs(question, case) -> dict[str, object]:
+    if len(question.input_names) != len(case.args):
+        raise NotebookFormatError(
+            f"Notebook inputs for {question.id} are not configured by this assignment"
+        )
+    inputs = dict(zip(question.input_names, case.args))
+    overlap = inputs.keys() & case.kwargs.keys()
+    if overlap:
+        names = ", ".join(sorted(overlap))
+        raise NotebookFormatError(f"Duplicate notebook input name(s): {names}")
+    inputs.update(case.kwargs)
+    return inputs
+
+
 def run_question_for_assignment(
     assignment: Assignment, question_id: str, submission: Path
 ) -> QuestionResult:
@@ -55,6 +70,39 @@ def run_question_for_assignment(
         previous_directory = Path.cwd()
         os.chdir(workdir)
         try:
+            if copied_submission.suffix.lower() == ".ipynb":
+                try:
+                    notebook = load_notebook(copied_submission)
+                    answer_source = notebook.answer_for(f"{assignment.id}{question.id}")
+                    case_results = []
+                    for case in question.cases:
+                        with tempfile.TemporaryDirectory(
+                            prefix="ne111-notebook-case-"
+                        ) as case_temporary:
+                            case_workdir = Path(case_temporary)
+                            for fixture in assignment.fixtures:
+                                fixture_path = case_workdir / fixture.path
+                                fixture_path.parent.mkdir(parents=True, exist_ok=True)
+                                fixture_path.write_text(
+                                    fixture.contents, encoding="utf-8"
+                                )
+                            os.chdir(case_workdir)
+                            case_results.append(
+                                run_notebook_case(
+                                    notebook.setup_sources,
+                                    answer_source,
+                                    _notebook_inputs(question, case),
+                                    case,
+                                )
+                            )
+                            os.chdir(workdir)
+                    cases = tuple(case_results)
+                except NotebookFormatError as error:
+                    cases = tuple(
+                        _failed_case(case.id, str(error)) for case in question.cases
+                    )
+                return QuestionResult(assignment.id, question.id, cases)
+
             try:
                 module = _load_module(copied_submission)
             except BaseException as error:  # noqa: BLE001 - submission import boundary

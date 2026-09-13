@@ -130,7 +130,7 @@ def run_question_source(
 ) -> QuestionResult:
     """Run a question using source uploaded through a browser."""
     safe_name = Path(filename).name
-    if not safe_name.lower().endswith(".py"):
+    if not safe_name.lower().endswith((".py", ".ipynb")):
         safe_name += ".py"
 
     with tempfile.TemporaryDirectory(prefix="ne111-upload-") as temporary:

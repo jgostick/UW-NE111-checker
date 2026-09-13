@@ -23,8 +23,16 @@ conda activate ne111
 ne111-grader A3
 ```
 
-The grader opens in a browser. Browse for your `.py` file, select a question tab,
-and press its **Run** button. The filename itself does not matter.
+The grader opens in a browser. Browse for your `.py` file or `.ipynb` notebook,
+select a question tab, and press its **Run** button. The filename itself does not
+matter. Follow the submission format stated in the assignment handout.
+
+Notebook assignments use tagged code cells. Put `# A1Q3` (using the applicable
+assignment and question ID) on the first nonblank line of the answer cell, then
+assign the result to `answer`. The handout specifies the input-variable names;
+the grader injects a fresh set of inputs and reruns the tagged cell for every
+case. Cells tagged `# setup` run before each answer cell. Notebook outputs and
+metadata are not executed.
 
 If the file is named `A3.py` and the command is run from the same directory, it
 is selected automatically. A path can also be supplied explicitly:
