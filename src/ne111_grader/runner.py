@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import ast
 import copy
 import inspect
 import io
@@ -9,6 +10,30 @@ from collections.abc import Callable
 from contextlib import redirect_stderr, redirect_stdout
 
 from .models import CallRecord, Case, CaseResult
+
+
+def _source_with_injected_inputs(source: str, input_names: set[str]) -> ast.Module:
+    """Remove top-level student test-value assignments before grading a cell."""
+    tree = ast.parse(source)
+    body = []
+    for statement in tree.body:
+        targets: list[ast.expr] = []
+        if isinstance(statement, ast.Assign):
+            targets = statement.targets
+        elif isinstance(statement, ast.AnnAssign):
+            targets = [statement.target]
+
+        assigned = {
+            node.id
+            for target in targets
+            for node in ast.walk(target)
+            if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Store)
+        }
+        if assigned & input_names:
+            continue
+        body.append(statement)
+    tree.body = body
+    return ast.fix_missing_locations(tree)
 
 
 def run_case(function: Callable[..., object], case: Case) -> CaseResult:
@@ -65,7 +90,12 @@ def run_notebook_case(
                     compile(source, f"<setup cell {index}>", "exec"), namespace
                 )
             exec(  # noqa: S102 - execute submitted code in the worker process
-                compile(answer_source, "<answer cell>", "exec"), namespace
+                compile(
+                    _source_with_injected_inputs(answer_source, set(inputs)),
+                    "<answer cell>",
+                    "exec",
+                ),
+                namespace,
             )
             if "answer" not in namespace:
                 raise NameError("The answer cell did not assign a value to answer")

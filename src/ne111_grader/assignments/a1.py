@@ -34,7 +34,7 @@ ASSIGNMENT = Assignment(
         Question(
             id="Q4",
             title="Swap two values",
-            input_names=("x", "y"),
+            input_names=("starting_x", "starting_y"),
             cases=(Case("Q4.1", args=(2, 3), checks=(Equals(9),)),),
         ),
         Question(

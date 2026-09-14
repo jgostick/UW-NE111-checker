@@ -26,7 +26,7 @@ REFERENCE_CELLS = [
     "# A1Q1\nanswer = a % b",
     "# A1Q2\nanswer = a + b * c",
     "# A1Q3\nx = starting_value\nx = x * scale\nx = x + offset\nanswer = x",
-    "# A1Q4\nx, y = y, x\nanswer = x**y",
+    "# A1Q4\nx, y = starting_x, starting_y\nx, y = y, x\nanswer = x**y",
     "# A1Q5\nanswer = (9 / 5) * celsius + 32",
     "# A1Q6\nimport math\nanswer = math.ceil(value) + math.floor(value) + math.log10(value)",
     "# A1Q7\nanswer = number ** (1 / root)",

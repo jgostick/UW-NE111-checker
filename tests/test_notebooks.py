@@ -93,3 +93,14 @@ def test_notebook_reports_a_cell_without_answer(tmp_path) -> None:
 
     assert not result.passed
     assert "did not assign a value to answer" in result.cases[0].checks[0].message
+
+
+def test_notebook_replaces_student_test_values_with_case_inputs(tmp_path) -> None:
+    submission = _write_notebook(
+        tmp_path,
+        ["# A99Q1\nvalue = 2\nanswer = value * 3"],
+    )
+
+    result = run_question_for_assignment(_assignment(), "Q1", submission)
+
+    assert result.passed
