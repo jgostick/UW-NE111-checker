@@ -40,38 +40,28 @@ st.set_page_config(page_title=f"{assignment.id} Grader", page_icon="✅")
 st.title(f"{assignment.title} Grader")
 st.caption("Each question runs in a separate process with a five-second timeout.")
 
-
-def _clear_uploaded_submission() -> None:
-    st.session_state.pop("submission-upload", None)
-
-
+configured_submission = Path(
+    st.text_input(
+        "Local submission path",
+        value=default_submission,
+        help=(
+            "Recommended: enter the path to your saved notebook. The grader rereads "
+            "this file every time you run a question."
+        ),
+    )
+).expanduser()
 uploaded_submission = st.file_uploader(
-    "Submission file",
+    "Or upload a one-time copy",
     type=("ipynb",) if assignment.notebook_submission else ("py",),
-    key="submission-upload",
     help=(
-        "Choose the Jupyter notebook required by this assignment."
+        "Use this only when the local path above is unavailable. Save changes and "
+        "upload the file again to check them."
         if assignment.notebook_submission
-        else "Choose a Python file containing the assignment functions."
+        else "Use this only when the local path above is unavailable."
     ),
 )
-configured_submission = Path(default_submission).expanduser()
 
-if uploaded_submission is not None:
-    st.button(
-        "Choose updated notebook"
-        if assignment.notebook_submission
-        else "Choose updated file",
-        on_click=_clear_uploaded_submission,
-        help="After saving changes, choose the updated file again before running it.",
-    )
-
-if uploaded_submission is not None:
-    uploaded_source = uploaded_submission.getvalue()
-    submission_key = hashlib.sha256(uploaded_source).hexdigest()[:12]
-    submission_label = uploaded_submission.name
-    submission_path = None
-elif configured_submission.is_file():
+if configured_submission.is_file():
     uploaded_source = None
     submission_key = (
         f"{configured_submission.resolve()}-{configured_submission.stat().st_mtime_ns}"
@@ -79,15 +69,21 @@ elif configured_submission.is_file():
     submission_label = configured_submission.name
     submission_path = configured_submission
     st.caption(
-        f"Using `{configured_submission}`. Browse for another submission to replace it."
+        f"Using `{configured_submission}`. Save the file, then run a question again "
+        "to check its latest contents."
     )
+elif uploaded_submission is not None:
+    uploaded_source = uploaded_submission.getvalue()
+    submission_key = hashlib.sha256(uploaded_source).hexdigest()[:12]
+    submission_label = uploaded_submission.name
+    submission_path = None
 else:
     uploaded_source = None
     submission_key = "none"
     submission_label = "No file selected"
     submission_path = None
     st.info(
-        "Browse for your Jupyter notebook submission."
+        "Enter the path to your Jupyter notebook above, or upload a copy."
         if assignment.notebook_submission
         else "Browse for the Python file containing your assignment functions."
     )
