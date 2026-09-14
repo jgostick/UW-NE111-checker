@@ -25,10 +25,12 @@ python -m pip install "uw-ne111-checker @ git+https://github.com/jgostick/UW-NE1
 
 ## Using the checker
 
-For each work session, launch the required assignment (`A1` through `A9`):
+For each work session, launch the required assignment (`A1` through `A9`).
+Use this form rather than a bare `ne111-checker` command: it always uses the
+same Python installation that installed the checker.
 
 ```console
-ne111-checker A3
+python -m ne111_checker A3
 ```
 
 If you chose the optional Conda environment, run `conda activate ne111` first.
@@ -48,7 +50,7 @@ If the file is named `A3.py` and the command is run from the same directory, it
 is selected automatically. A path can also be supplied explicitly:
 
 ```console
-ne111-checker A3 --submission path/to/A3.py
+python -m ne111_checker A3 --submission path/to/A3.py
 ```
 
 Stop the Streamlit server with `Ctrl+C`.
@@ -89,7 +91,7 @@ Create a local environment from the repository:
 conda env create --file environment.yml
 conda activate ne111
 pytest
-ne111-checker A1 --submission path/to/A1.py
+python -m ne111_checker A1 --submission path/to/A1.py
 ```
 
 Alternatively, with uv:
