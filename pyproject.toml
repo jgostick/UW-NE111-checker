@@ -7,7 +7,7 @@ name = "uw-ne111-checker"
 version = "0.1.0"
 description = "Reusable student-facing checkers for UW NE 111"
 readme = "README.md"
-requires-python = ">=3.10,<3.13"
+requires-python = ">=3.10,<3.15"
 dependencies = [
     "matplotlib>=3.9",
     "numpy>=1.26",
