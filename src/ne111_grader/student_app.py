@@ -40,9 +40,15 @@ st.set_page_config(page_title=f"{assignment.id} Grader", page_icon="✅")
 st.title(f"{assignment.title} Grader")
 st.caption("Each question runs in a separate process with a five-second timeout.")
 
+
+def _clear_uploaded_submission() -> None:
+    st.session_state.pop("submission-upload", None)
+
+
 uploaded_submission = st.file_uploader(
     "Submission file",
     type=("ipynb",) if assignment.notebook_submission else ("py",),
+    key="submission-upload",
     help=(
         "Choose the Jupyter notebook required by this assignment."
         if assignment.notebook_submission
@@ -50,6 +56,15 @@ uploaded_submission = st.file_uploader(
     ),
 )
 configured_submission = Path(default_submission).expanduser()
+
+if uploaded_submission is not None:
+    st.button(
+        "Choose updated notebook"
+        if assignment.notebook_submission
+        else "Choose updated file",
+        on_click=_clear_uploaded_submission,
+        help="After saving changes, choose the updated file again before running it.",
+    )
 
 if uploaded_submission is not None:
     uploaded_source = uploaded_submission.getvalue()
