@@ -8,6 +8,16 @@ assignments.
 Do this once in Anaconda Prompt on Windows or a terminal on macOS:
 
 ```console
+python -m pip install "uw-ne111-grader @ git+https://github.com/jgostick/UW-NE111-grader.git@main"
+```
+
+### Optional: use an isolated Conda environment
+
+The checker has ordinary Python dependencies and can be installed into the
+Anaconda base environment. If you prefer an isolated environment, create and
+activate it before running the installation command:
+
+```console
 conda create -n ne111 python=3.12 pip git -y
 conda activate ne111
 python -m pip install "uw-ne111-grader @ git+https://github.com/jgostick/UW-NE111-grader.git@main"
@@ -15,17 +25,17 @@ python -m pip install "uw-ne111-grader @ git+https://github.com/jgostick/UW-NE11
 
 ## Using the grader
 
-For each work session, activate the environment and launch the required
-assignment (`A1` through `A8`):
+For each work session, launch the required assignment (`A1` through `A9`):
 
 ```console
-conda activate ne111
 ne111-grader A3
 ```
 
-The grader opens in a browser. Browse for your `.py` file or `.ipynb` notebook,
-select a question tab, and press its **Run** button. The filename itself does not
-matter. Follow the submission format stated in the assignment handout.
+If you chose the optional Conda environment, run `conda activate ne111` first.
+
+The grader opens in a browser. It reads the expected submission filename from
+the folder where you launched it: `A1.ipynb` for A1 and `A<N>.py` for the
+function-based assignments. Select a question tab and press its **Run** button.
 
 Notebook assignments use tagged code cells. Put `# A1Q3` (using the applicable
 assignment and question ID) on the first nonblank line of the answer cell, then
@@ -45,13 +55,14 @@ Stop the Streamlit server with `Ctrl+C`.
 
 ## Updating
 
-When instructed to update the grader, activate the environment and reinstall it
-from GitHub:
+When instructed to update the grader, reinstall it from GitHub:
 
 ```console
-conda activate ne111
 python -m pip install --upgrade --force-reinstall "uw-ne111-grader @ git+https://github.com/jgostick/UW-NE111-grader.git@main"
 ```
+
+If you chose the optional Conda environment, activate it before running this
+command.
 
 ## Alternative: uvx
 
