@@ -29,7 +29,7 @@ def test_student_app_runs_a_question(monkeypatch, tmp_path) -> None:
     monkeypatch.setenv("NE111_GRADER_ASSIGNMENT", "A1")
     monkeypatch.setenv("NE111_GRADER_SUBMISSION", str(submission))
 
-    app_spec = importlib.util.find_spec("ne111_grader.student_app")
+    app_spec = importlib.util.find_spec("ne111_checker.student_app")
     assert app_spec is not None and app_spec.origin is not None
 
     app = AppTest.from_file(Path(app_spec.origin)).run(timeout=10)

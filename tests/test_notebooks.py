@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import json
 
-from ne111_grader.checks import Equals
-from ne111_grader.models import Assignment, Case, Question
-from ne111_grader.worker import run_question_for_assignment
+from ne111_checker.checks import Equals
+from ne111_checker.models import Assignment, Case, Question
+from ne111_checker.worker import run_question_for_assignment
 
 
 def _write_notebook(tmp_path, cells: list[str]):

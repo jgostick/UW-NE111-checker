@@ -7,8 +7,8 @@ from pathlib import Path
 
 import streamlit as st
 
-from ne111_grader.isolated import run_question_isolated
-from ne111_grader.registry import get_assignment
+from ne111_checker.isolated import run_question_isolated
+from ne111_checker.registry import get_assignment
 
 
 def _format_call(
@@ -35,8 +35,8 @@ default_submission = os.environ.get(
     str(Path.cwd() / assignment.expected_filename),
 )
 
-st.set_page_config(page_title=f"{assignment.id} Grader", page_icon="✅")
-st.title(f"{assignment.title} Grader")
+st.set_page_config(page_title=f"{assignment.id} Checker", page_icon="✅")
+st.title(f"{assignment.title} Checker")
 st.caption("Each question runs in a separate process with a five-second timeout.")
 
 configured_submission = Path(default_submission).expanduser()
@@ -57,7 +57,7 @@ else:
     submission_path = None
     st.info(
         f"Save `{assignment.expected_filename}` in the folder where you launched "
-        "the grader, then restart the checker."
+        "the checker, then restart the checker."
     )
 
 tabs = st.tabs([question.id for question in assignment.questions])

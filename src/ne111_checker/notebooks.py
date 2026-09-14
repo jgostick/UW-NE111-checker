@@ -1,4 +1,4 @@
-"""Read the small, deliberate notebook submission format used by the grader."""
+"""Read the small, deliberate notebook submission format used by the checker."""
 
 from __future__ import annotations
 

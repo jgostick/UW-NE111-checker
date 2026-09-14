@@ -1298,7 +1298,7 @@ wheels = [
 ]
 
 [[package]]
-name = "uw-ne111-grader"
+name = "uw-ne111-checker"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [

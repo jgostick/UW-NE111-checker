@@ -1,4 +1,4 @@
-# UW NE 111 Grader
+# UW NE 111 Checker
 
 Reusable grading engine and student-facing Streamlit app for UW NE 111
 assignments.
@@ -8,7 +8,7 @@ assignments.
 Do this once in Anaconda Prompt on Windows or a terminal on macOS:
 
 ```console
-python -m pip install "uw-ne111-grader @ git+https://github.com/jgostick/UW-NE111-grader.git@main"
+python -m pip install "uw-ne111-checker @ git+https://github.com/jgostick/UW-NE111-checker.git@main"
 ```
 
 ### Optional: use an isolated Conda environment
@@ -20,27 +20,27 @@ activate it before running the installation command:
 ```console
 conda create -n ne111 python=3.12 pip git -y
 conda activate ne111
-python -m pip install "uw-ne111-grader @ git+https://github.com/jgostick/UW-NE111-grader.git@main"
+python -m pip install "uw-ne111-checker @ git+https://github.com/jgostick/UW-NE111-checker.git@main"
 ```
 
-## Using the grader
+## Using the checker
 
 For each work session, launch the required assignment (`A1` through `A9`):
 
 ```console
-ne111-grader A3
+ne111-checker A3
 ```
 
 If you chose the optional Conda environment, run `conda activate ne111` first.
 
-The grader opens in a browser. It reads the expected submission filename from
+The checker opens in a browser. It reads the expected submission filename from
 the folder where you launched it: `A1.ipynb` for A1 and `A<N>.py` for the
 function-based assignments. Select a question tab and press its **Run** button.
 
 Notebook assignments use tagged code cells. Put `# A1Q3` (using the applicable
 assignment and question ID) on the first nonblank line of the answer cell, then
 assign the result to `answer`. The handout specifies the input-variable names;
-the grader injects a fresh set of inputs and reruns the tagged cell for every
+the checker injects a fresh set of inputs and reruns the tagged cell for every
 case. Cells tagged `# setup` run before each answer cell. Notebook outputs and
 metadata are not executed.
 
@@ -48,17 +48,17 @@ If the file is named `A3.py` and the command is run from the same directory, it
 is selected automatically. A path can also be supplied explicitly:
 
 ```console
-ne111-grader A3 --submission path/to/A3.py
+ne111-checker A3 --submission path/to/A3.py
 ```
 
 Stop the Streamlit server with `Ctrl+C`.
 
 ## Updating
 
-When instructed to update the grader, reinstall it from GitHub:
+When instructed to update the checker, reinstall it from GitHub:
 
 ```console
-python -m pip install --upgrade --force-reinstall "uw-ne111-grader @ git+https://github.com/jgostick/UW-NE111-grader.git@main"
+python -m pip install --upgrade --force-reinstall "uw-ne111-checker @ git+https://github.com/jgostick/UW-NE111-checker.git@main"
 ```
 
 If you chose the optional Conda environment, activate it before running this
@@ -67,18 +67,18 @@ command.
 ## Alternative: uvx
 
 If you use [uv](https://docs.astral.sh/uv/getting-started/installation/), no
-Conda environment or separate grader installation is required. Run the grader
+Conda environment or separate checker installation is required. Run the checker
 directly from GitHub:
 
 ```console
-uvx --python 3.12 --from "git+https://github.com/jgostick/UW-NE111-grader.git@main" ne111-grader A3
+uvx --python 3.12 --from "git+https://github.com/jgostick/UW-NE111-checker.git@main" ne111-checker A3
 ```
 
 uv creates and caches an isolated environment automatically. To force it to
 check GitHub for an updated version, add `--refresh`:
 
 ```console
-uvx --refresh --python 3.12 --from "git+https://github.com/jgostick/UW-NE111-grader.git@main" ne111-grader A3
+uvx --refresh --python 3.12 --from "git+https://github.com/jgostick/UW-NE111-checker.git@main" ne111-checker A3
 ```
 
 ## Development
@@ -89,14 +89,14 @@ Create a local environment from the repository:
 conda env create --file environment.yml
 conda activate ne111
 pytest
-ne111-grader A1 --submission path/to/A1.py
+ne111-checker A1 --submission path/to/A1.py
 ```
 
 Alternatively, with uv:
 
 ```console
 uv run --extra dev pytest
-uv run ne111-grader A1 --submission path/to/A1.py
+uv run ne111-checker A1 --submission path/to/A1.py
 ```
 
 ## Architecture

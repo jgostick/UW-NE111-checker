@@ -1,4 +1,4 @@
-"""Command-line launcher for the student Streamlit grader."""
+"""Command-line launcher for the student Streamlit checker."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ from .registry import assignment_ids, get_assignment
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="ne111-grader")
+    parser = argparse.ArgumentParser(prog="ne111-checker")
     parser.add_argument("assignment", choices=assignment_ids(), type=str.upper)
     parser.add_argument(
         "--submission",

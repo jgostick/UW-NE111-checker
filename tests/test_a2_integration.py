@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import textwrap
 
-from ne111_grader.isolated import run_question_isolated
-from ne111_grader.registry import assignment_ids, get_assignment
+from ne111_checker.isolated import run_question_isolated
+from ne111_checker.registry import assignment_ids, get_assignment
 
 REFERENCE = """
 def A3Q1(a, b, c):

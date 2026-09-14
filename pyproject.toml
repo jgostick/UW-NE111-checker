@@ -3,9 +3,9 @@ requires = ["setuptools>=75"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "uw-ne111-grader"
+name = "uw-ne111-checker"
 version = "0.1.0"
-description = "Reusable student-facing graders for UW NE 111"
+description = "Reusable student-facing checkers for UW NE 111"
 readme = "README.md"
 requires-python = ">=3.10,<3.13"
 dependencies = [
@@ -22,7 +22,7 @@ dev = [
 ]
 
 [project.scripts]
-ne111-grader = "ne111_grader.cli:main"
+ne111-checker = "ne111_checker.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

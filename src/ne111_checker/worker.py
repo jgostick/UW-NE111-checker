@@ -58,7 +58,7 @@ def run_question_for_assignment(
 ) -> QuestionResult:
     question = assignment.question(question_id)
 
-    with tempfile.TemporaryDirectory(prefix="ne111-grader-") as temporary:
+    with tempfile.TemporaryDirectory(prefix="ne111-checker-") as temporary:
         workdir = Path(temporary)
         copied_submission = workdir / submission.name
         shutil.copy2(submission, copied_submission)
@@ -144,7 +144,7 @@ def main(argv: list[str] | None = None) -> int:
     except BaseException as error:  # noqa: BLE001 - worker must always report a result
         assignment = get_assignment(args.assignment)
         question = assignment.question(args.question)
-        message = f"Grader worker failed: {type(error).__name__}: {error}"
+        message = f"Checker worker failed: {type(error).__name__}: {error}"
         cases = tuple(_failed_case(case.id, message) for case in question.cases)
         result = QuestionResult(assignment.id, question.id, cases)
 

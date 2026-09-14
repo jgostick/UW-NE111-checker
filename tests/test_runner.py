@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from ne111_grader.checks import Approx, Equals, Raises, Silent
-from ne111_grader.models import Case
-from ne111_grader.runner import run_case
+from ne111_checker.checks import Approx, Equals, Raises, Silent
+from ne111_checker.models import Case
+from ne111_checker.runner import run_case
 
 
 def test_multiple_checks_can_pass() -> None:

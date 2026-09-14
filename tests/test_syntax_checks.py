@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import ast
 
-from ne111_grader.checks import UsesSyntax
-from ne111_grader.models import CallRecord
+from ne111_checker.checks import UsesSyntax
+from ne111_checker.models import CallRecord
 
 
 def test_uses_syntax_finds_ast_node() -> None:

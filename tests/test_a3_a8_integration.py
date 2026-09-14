@@ -4,8 +4,8 @@ import textwrap
 
 import pytest
 
-from ne111_grader.isolated import run_question_isolated
-from ne111_grader.registry import get_assignment
+from ne111_checker.isolated import run_question_isolated
+from ne111_checker.registry import get_assignment
 
 SOURCES = {
     "A4": """

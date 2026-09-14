@@ -1,4 +1,4 @@
-"""Parent-side API for running grader workers with a timeout."""
+"""Parent-side API for running checker workers with a timeout."""
 
 from __future__ import annotations
 
@@ -87,7 +87,7 @@ def run_question_with_worker(
     )
     if payload is None:
         detail = completed.stderr.strip() or completed.stdout.strip()
-        message = "Grader worker exited without returning a result"
+        message = "Checker worker exited without returning a result"
         if detail:
             message += f": {detail[-500:]}"
         return _question_failure(assignment, question_id, message)
@@ -98,7 +98,7 @@ def run_question_with_worker(
         return _question_failure(
             assignment,
             question_id,
-            f"Could not read grader result: {error}",
+            f"Could not read checker result: {error}",
         )
 
 
@@ -115,7 +115,7 @@ def run_question_isolated(
         assignment,
         question_id,
         submission,
-        worker_module="ne111_grader.worker",
+        worker_module="ne111_checker.worker",
         timeout=timeout,
     )
 

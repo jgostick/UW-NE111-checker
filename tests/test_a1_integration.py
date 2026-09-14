@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import json
 
-from ne111_grader.isolated import run_question_isolated, run_question_source
-from ne111_grader.registry import get_assignment
+from ne111_checker.isolated import run_question_isolated, run_question_source
+from ne111_checker.registry import get_assignment
 
 
 def _notebook(cells: list[str]) -> bytes:

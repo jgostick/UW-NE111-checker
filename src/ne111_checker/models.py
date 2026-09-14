@@ -1,4 +1,4 @@
-"""Data structures shared by assignment specifications and grader interfaces."""
+"""Data structures shared by assignment specifications and checker interfaces."""
 
 from __future__ import annotations
 
