@@ -39,9 +39,19 @@ def main(argv: list[str] | None = None) -> int:
     if args.headless:
         command.extend(["--server.headless", "true"])
 
+    process = subprocess.Popen(command, env=environment)
     try:
-        return subprocess.run(command, env=environment, check=False).returncode
+        return process.wait()
     except KeyboardInterrupt:
+        # On Windows, Ctrl+C can interrupt this launcher without interrupting
+        # the Streamlit child process. Stop it explicitly so the prompt is
+        # returned to the student.
+        process.terminate()
+        try:
+            process.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            process.kill()
+            process.wait()
         return 130
 
 
