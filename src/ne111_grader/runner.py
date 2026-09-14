@@ -19,6 +19,10 @@ def _source_with_injected_inputs(source: str, input_names: set[str]) -> ast.Modu
     accepting_test_values = True
     replaced_names: set[str] = set()
     for statement in tree.body:
+        if isinstance(statement, (ast.Import, ast.ImportFrom)):
+            body.append(statement)
+            continue
+
         targets: list[ast.expr] = []
         if isinstance(statement, ast.Assign):
             targets = statement.targets
