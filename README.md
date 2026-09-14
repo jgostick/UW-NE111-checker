@@ -53,7 +53,9 @@ is selected automatically. A path can also be supplied explicitly:
 python -m ne111_checker A3 --submission path/to/A3.py
 ```
 
-Stop the Streamlit server with `Ctrl+C`.
+Stop the Streamlit server by returning to Anaconda Prompt and pressing `Ctrl+C`.
+On Windows, `Ctrl+Break` (or `Ctrl+Fn+Pause` on some laptops) is an alternative
+if `Ctrl+C` is intercepted by the terminal.
 
 ## Updating
 

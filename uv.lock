@@ -1962,7 +1962,7 @@ wheels = [
 
 [[package]]
 name = "uw-ne111-checker"
-version = "0.1.0"
+version = "0.1.1"
 source = { editable = "." }
 dependencies = [
     { name = "matplotlib", version = "3.10.9", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
