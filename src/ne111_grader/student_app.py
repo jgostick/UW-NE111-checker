@@ -2,13 +2,12 @@
 
 from __future__ import annotations
 
-import hashlib
 import os
 from pathlib import Path
 
 import streamlit as st
 
-from ne111_grader.isolated import run_question_isolated, run_question_source
+from ne111_grader.isolated import run_question_isolated
 from ne111_grader.registry import get_assignment
 
 
@@ -40,29 +39,9 @@ st.set_page_config(page_title=f"{assignment.id} Grader", page_icon="✅")
 st.title(f"{assignment.title} Grader")
 st.caption("Each question runs in a separate process with a five-second timeout.")
 
-configured_submission = Path(
-    st.text_input(
-        "Local submission path",
-        value=default_submission,
-        help=(
-            "Recommended: enter the path to your saved notebook. The grader rereads "
-            "this file every time you run a question."
-        ),
-    )
-).expanduser()
-uploaded_submission = st.file_uploader(
-    "Or upload a one-time copy",
-    type=("ipynb",) if assignment.notebook_submission else ("py",),
-    help=(
-        "Use this only when the local path above is unavailable. Save changes and "
-        "upload the file again to check them."
-        if assignment.notebook_submission
-        else "Use this only when the local path above is unavailable."
-    ),
-)
+configured_submission = Path(default_submission).expanduser()
 
 if configured_submission.is_file():
-    uploaded_source = None
     submission_key = (
         f"{configured_submission.resolve()}-{configured_submission.stat().st_mtime_ns}"
     )
@@ -72,20 +51,13 @@ if configured_submission.is_file():
         f"Using `{configured_submission}`. Save the file, then run a question again "
         "to check its latest contents."
     )
-elif uploaded_submission is not None:
-    uploaded_source = uploaded_submission.getvalue()
-    submission_key = hashlib.sha256(uploaded_source).hexdigest()[:12]
-    submission_label = uploaded_submission.name
-    submission_path = None
 else:
-    uploaded_source = None
     submission_key = "none"
-    submission_label = "No file selected"
+    submission_label = "Notebook not found"
     submission_path = None
     st.info(
-        "Enter the path to your Jupyter notebook above, or upload a copy."
-        if assignment.notebook_submission
-        else "Browse for the Python file containing your assignment functions."
+        f"Save `{assignment.expected_filename}` in the folder where you launched "
+        "the grader, then restart the checker."
     )
 
 tabs = st.tabs([question.id for question in assignment.questions])
@@ -111,24 +83,15 @@ for tab, question in zip(tabs, assignment.questions):
                 else f"Run {function_name}"
             ),
             key=f"run-{question.id}",
-            disabled=uploaded_source is None and submission_path is None,
+            disabled=submission_path is None,
         ):
             with st.spinner(f"Testing {function_name}..."):
-                if uploaded_source is not None:
-                    st.session_state[state_key] = run_question_source(
-                        assignment.id,
-                        question.id,
-                        uploaded_source,
-                        filename=submission_label,
-                        timeout=5.0,
-                    )
-                else:
-                    st.session_state[state_key] = run_question_isolated(
-                        assignment.id,
-                        question.id,
-                        submission_path,
-                        timeout=5.0,
-                    )
+                st.session_state[state_key] = run_question_isolated(
+                    assignment.id,
+                    question.id,
+                    submission_path,
+                    timeout=5.0,
+                )
 
         result = st.session_state.get(state_key)
         if result is not None:
