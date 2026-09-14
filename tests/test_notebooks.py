@@ -104,3 +104,14 @@ def test_notebook_replaces_student_test_values_with_case_inputs(tmp_path) -> Non
     result = run_question_for_assignment(_assignment(), "Q1", submission)
 
     assert result.passed
+
+
+def test_notebook_keeps_assignments_after_its_test_values(tmp_path) -> None:
+    submission = _write_notebook(
+        tmp_path,
+        ["# A99Q1\nvalue = 2\nvalue = value * 3\nanswer = value"],
+    )
+
+    result = run_question_for_assignment(_assignment(), "Q1", submission)
+
+    assert result.passed

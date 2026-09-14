@@ -16,6 +16,8 @@ def _source_with_injected_inputs(source: str, input_names: set[str]) -> ast.Modu
     """Remove top-level student test-value assignments before grading a cell."""
     tree = ast.parse(source)
     body = []
+    accepting_test_values = True
+    replaced_names: set[str] = set()
     for statement in tree.body:
         targets: list[ast.expr] = []
         if isinstance(statement, ast.Assign):
@@ -29,8 +31,11 @@ def _source_with_injected_inputs(source: str, input_names: set[str]) -> ast.Modu
             for node in ast.walk(target)
             if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Store)
         }
-        if assigned & input_names:
+        new_test_values = (assigned & input_names) - replaced_names
+        if accepting_test_values and new_test_values:
+            replaced_names.update(new_test_values)
             continue
+        accepting_test_values = False
         body.append(statement)
     tree.body = body
     return ast.fix_missing_locations(tree)
