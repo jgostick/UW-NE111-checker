@@ -5,35 +5,53 @@ assignments.
 
 ## Student installation
 
-Do this once in Anaconda Prompt on Windows or a terminal on macOS:
+Git is not required. Choose the instructions for your computer:
+
+<details open>
+<summary><strong>Windows — Anaconda Prompt</strong></summary>
+
+Open **Anaconda Prompt** from the Start menu, then run:
 
 ```console
-python -m pip install "uw-ne111-checker @ git+https://github.com/jgostick/UW-NE111-checker.git@main"
+python -m pip install "https://github.com/jgostick/UW-NE111-checker/archive/refs/heads/main.zip"
 ```
 
-### Optional: use an isolated Conda environment
+</details>
 
-The checker has ordinary Python dependencies and can be installed into the
-Anaconda base environment. If you prefer an isolated environment, create and
-activate it before running the installation command:
+<details>
+<summary><strong>macOS — Terminal</strong></summary>
+
+Open **Terminal**, then run:
 
 ```console
-conda create -n ne111 python=3.12 pip git -y
-conda activate ne111
-python -m pip install "uw-ne111-checker @ git+https://github.com/jgostick/UW-NE111-checker.git@main"
+python3 -m pip install "https://github.com/jgostick/UW-NE111-checker/archive/refs/heads/main.zip"
 ```
+
+</details>
 
 ## Using the checker
 
 For each work session, launch the required assignment (`A1` through `A9`).
-Use this form rather than a bare `ne111-checker` command: it always uses the
-same Python installation that installed the checker.
+Use these commands rather than a bare `ne111-checker` command: they always use
+the same Python installation that installed the checker.
+
+<details open>
+<summary><strong>Windows</strong></summary>
 
 ```console
 python -m ne111_checker A3
 ```
 
-If you chose the optional Conda environment, run `conda activate ne111` first.
+</details>
+
+<details>
+<summary><strong>macOS</strong></summary>
+
+```console
+python3 -m ne111_checker A3
+```
+
+</details>
 
 The checker opens in a browser. It reads the expected submission filename from
 the folder where you launched it: `A1.ipynb` for A1 and `A<N>.py` for the
@@ -47,26 +65,38 @@ case. Cells tagged `# setup` run before each answer cell. Notebook outputs and
 metadata are not executed.
 
 If the file is named `A3.py` and the command is run from the same directory, it
-is selected automatically. A path can also be supplied explicitly:
+is selected automatically. A path can also be supplied explicitly; use
+`python3` rather than `python` on macOS:
 
 ```console
 python -m ne111_checker A3 --submission path/to/A3.py
 ```
 
-Stop the Streamlit server by returning to Anaconda Prompt and pressing `Ctrl+C`.
-On Windows, `Ctrl+Break` (or `Ctrl+Fn+Pause` on some laptops) is an alternative
-if `Ctrl+C` is intercepted by the terminal.
+To stop the Streamlit server, return to the terminal where you launched it and
+press `Ctrl+C`. On Windows, `Ctrl+Break` (or `Ctrl+Fn+Pause` on some laptops) is
+an alternative if `Ctrl+C` is intercepted by the terminal.
 
 ## Updating
 
-When instructed to update the checker, reinstall it from GitHub:
+When instructed to update the checker, run the appropriate command:
+
+<details open>
+<summary><strong>Windows</strong></summary>
 
 ```console
-python -m pip install --upgrade --force-reinstall "uw-ne111-checker @ git+https://github.com/jgostick/UW-NE111-checker.git@main"
+python -m pip install --upgrade --force-reinstall --no-cache-dir "https://github.com/jgostick/UW-NE111-checker/archive/refs/heads/main.zip"
 ```
 
-If you chose the optional Conda environment, activate it before running this
-command.
+</details>
+
+<details>
+<summary><strong>macOS</strong></summary>
+
+```console
+python3 -m pip install --upgrade --force-reinstall --no-cache-dir "https://github.com/jgostick/UW-NE111-checker/archive/refs/heads/main.zip"
+```
+
+</details>
 
 ## Alternative: uvx
 
