@@ -1,62 +1,51 @@
+"""Integration coverage for the notebook-based Assignment 2."""
+
 from __future__ import annotations
 
-import textwrap
+import json
 
 from ne111_checker.isolated import run_question_isolated
 from ne111_checker.registry import assignment_ids, get_assignment
 
-REFERENCE = """
-def A3Q1(a, b, c):
-    return a < b < c
 
-def A3Q2(temperature):
-    return 0 <= temperature <= 100
-
-def A3Q3(a, b, relation):
-    if relation == ">": return a > b
-    if relation == "<": return a < b
-    if relation == "==": return a == b
-    if relation == "<=": return a <= b
-    if relation == ">=": return a >= b
-    if relation == "!=": return a != b
-
-def A3Q4(values):
-    count = 0
-    for value in values:
-        if value % 2 == 0:
-            count += 1
-    return count
-
-def A3Q5(dictionary, key):
-    return key in dictionary.keys()
-
-def A3Q6(value):
-    return type(value) in (int, float, complex)
-
-def A3Q7(values):
-    for value in values:
-        if type(value) is int:
-            return True
-    return False
-
-def A3Q8(values):
-    for index in range(len(values) - 1):
-        if values[index] > values[index + 1]:
-            return False
-    return True
-"""
+def _notebook(cells: list[str]) -> bytes:
+    return json.dumps(
+        {
+            "nbformat": 4,
+            "nbformat_minor": 5,
+            "metadata": {},
+            "cells": [
+                {"cell_type": "code", "metadata": {}, "source": source}
+                for source in cells
+            ],
+        }
+    ).encode()
 
 
-def test_public_a2_reference_passes(tmp_path) -> None:
-    submission = tmp_path / "A3.py"
-    submission.write_text(textwrap.dedent(REFERENCE), encoding="utf-8")
-    assignment = get_assignment("A3")
+REFERENCE_CELLS = [
+    "# A2Q1\nanswer = float(a)",
+    "# A2Q2\nanswer = int(float(a))",
+    "# A2Q3\nanswer = a % b",
+    "# A2Q4\nanswer = (int(a), a % 1)",
+    "# A2Q5\nanswer = str(type(a))",
+    "# A2Q6\nanswer = a + b",
+    "# A2Q7\na[key] = val\nanswer = a",
+    "# A2Q8\na.remove(val)\nanswer = a",
+    "# A2Q9\nanswer = a[:len(a) // 2]",
+    "# A2Q10\nanswer = max(a) - min(a)",
+]
+
+
+def test_public_a2_reference_notebook_passes(tmp_path) -> None:
+    submission = tmp_path / "A2.ipynb"
+    submission.write_bytes(_notebook(REFERENCE_CELLS))
+    assignment = get_assignment("A2")
 
     results = tuple(
-        run_question_isolated("A3", question.id, submission)
+        run_question_isolated("A2", question.id, submission)
         for question in assignment.questions
     )
 
     assert all(result.passed for result in results)
-    assert sum(len(result.cases) for result in results) == 27
+    assert sum(len(result.cases) for result in results) == 29
     assert assignment_ids() == tuple(f"A{number}" for number in range(1, 10))

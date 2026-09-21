@@ -23,6 +23,12 @@
 - Before handoff, also run `uv run --extra dev ruff check .` and `uv run --extra dev ruff format --check .`.
 - Smoke-test an edited assignment through the real entry point when relevant: `uv run ne111-checker A1 --submission path/to/A1.py` (replace `A1` and the path).
 
+## Deployment verification
+
+- GitHub Actions must test the package as students receive it, not only through a local checkout or editable install. The student installation path must work without Git installed; at minimum, install the GitHub archive/ZIP on supported operating systems and run `python -m ne111_checker --help`.
+- Deployment smoke tests must launch the real `ne111-checker` CLI/Streamlit entry point with a synthetic submission, wait for the Streamlit health endpoint, and exercise at least one question. Keep these checks in `.github/workflows/` and run them on pushes and pull requests when practical.
+- When changing packaging, dependencies, README installation commands, or the CLI, update the deployment workflows and test every documented distribution path. A passing editable-install test does not validate the student experience.
+
 ## Code and test conventions
 
 - Use the `src/` package layout, `from __future__ import annotations`, type annotations, relative intra-package imports, and focused module docstrings. Follow Ruff's default formatting.
