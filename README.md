@@ -85,7 +85,7 @@ When instructed to update the checker, run the appropriate command:
 <summary><strong>Windows</strong></summary>
 
 ```console
-python -m pip install --upgrade --force-reinstall --no-cache-dir "https://github.com/jgostick/UW-NE111-checker/archive/refs/heads/main.zip"
+python -m pip install --upgrade "https://github.com/jgostick/UW-NE111-checker/archive/refs/heads/main.zip"
 ```
 
 </details>
@@ -94,7 +94,7 @@ python -m pip install --upgrade --force-reinstall --no-cache-dir "https://github
 <summary><strong>macOS</strong></summary>
 
 ```console
-python3 -m pip install --upgrade --force-reinstall --no-cache-dir "https://github.com/jgostick/UW-NE111-checker/archive/refs/heads/main.zip"
+python3 -m pip install --upgrade "https://github.com/jgostick/UW-NE111-checker/archive/refs/heads/main.zip"
 ```
 
 </details>
