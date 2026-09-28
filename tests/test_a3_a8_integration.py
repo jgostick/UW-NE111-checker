@@ -167,7 +167,10 @@ def A9Q5(x, y):
 EXPECTED_CASES = {"A4": 22, "A5": 6, "A6": 14, "A7": 8, "A8": 15, "A9": 9}
 
 
-@pytest.mark.parametrize("assignment_id", tuple(SOURCES))
+@pytest.mark.parametrize(
+    "assignment_id",
+    tuple(assignment_id for assignment_id in SOURCES if assignment_id != "A4"),
+)
 def test_reference_submission_passes(assignment_id, tmp_path) -> None:
     submission = tmp_path / f"{assignment_id}.py"
     submission.write_text(textwrap.dedent(SOURCES[assignment_id]), encoding="utf-8")

@@ -54,23 +54,23 @@ python3 -m ne111_checker A3
 </details>
 
 The checker opens in a browser. It reads the expected submission filename from
-the folder where you launched it: `A1.ipynb` and `A2.ipynb` for the notebook
+the folder where you launched it: `A1.ipynb` through `A4.ipynb` for the notebook
 assignments, and `A<N>.py` for the function-based assignments. Select a
 question tab and press its **Run** button.
 
-Notebook assignments use tagged code cells. Put `# A1Q3` or `# A2Q3` (using the
+Notebook assignments use tagged code cells. Put `# A1Q3` through `# A4Q3` (using the
 applicable assignment and question ID) on the first nonblank line of the answer cell, then
 assign the result to `answer`. The handout specifies the input-variable names;
 the checker injects a fresh set of inputs and reruns the tagged cell for every
 case. Cells tagged `# setup` run before each answer cell. Notebook outputs and
 metadata are not executed.
 
-If the file is named `A3.py` and the command is run from the same directory, it
+If the file is named `A3.ipynb` and the command is run from the same directory, it
 is selected automatically. A path can also be supplied explicitly; use
 `python3` rather than `python` on macOS:
 
 ```console
-python -m ne111_checker A3 --submission path/to/A3.py
+python -m ne111_checker A3 --submission path/to/A3.ipynb
 ```
 
 To stop the Streamlit server, return to the terminal where you launched it and
@@ -124,14 +124,14 @@ Create a local environment from the repository:
 conda env create --file environment.yml
 conda activate ne111
 pytest
-python -m ne111_checker A1 --submission path/to/A1.py
+python -m ne111_checker A1 --submission path/to/A1.ipynb
 ```
 
 Alternatively, with uv:
 
 ```console
 uv run --extra dev pytest
-uv run ne111-checker A1 --submission path/to/A1.py
+uv run ne111-checker A1 --submission path/to/A1.ipynb
 ```
 
 ## Architecture

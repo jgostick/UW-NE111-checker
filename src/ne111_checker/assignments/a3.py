@@ -1,4 +1,4 @@
-"""Public checks for Assignment 3."""
+"""Public checks for notebook-based Assignment 3."""
 
 from __future__ import annotations
 
@@ -8,10 +8,12 @@ from ..models import Assignment, Case, Question
 ASSIGNMENT = Assignment(
     id="A3",
     title="Assignment 3",
+    notebook_submission=True,
     questions=(
         Question(
             id="Q1",
             title="Check whether three values are increasing",
+            input_names=("a", "b", "c"),
             cases=(
                 Case("Q1.1", args=(2, 3, 5), checks=(Equals(True),)),
                 Case("Q1.2", args=(4, 3, 6), checks=(Equals(False), Silent())),
@@ -21,6 +23,7 @@ ASSIGNMENT = Assignment(
         Question(
             id="Q2",
             title="Check whether water is liquid",
+            input_names=("temperature",),
             cases=(
                 Case("Q2.1", args=(50,), checks=(Equals(True),)),
                 Case("Q2.2", args=(110,), checks=(Equals(False),)),
@@ -31,6 +34,7 @@ ASSIGNMENT = Assignment(
         Question(
             id="Q3",
             title="Apply a relational operator",
+            input_names=("a", "b", "operator"),
             cases=(
                 Case("Q3.1", args=(1, 2, "=="), checks=(Equals(False),)),
                 Case("Q3.2", args=(1, 2, ">"), checks=(Equals(False),)),
@@ -40,6 +44,7 @@ ASSIGNMENT = Assignment(
         Question(
             id="Q4",
             title="Count even values in a list",
+            input_names=("values",),
             cases=(
                 Case("Q4.1", args=([1, 2, 4, 11],), checks=(Equals(2),)),
                 Case("Q4.2", args=([1, 2, 4, "11"],), checks=(Raises(TypeError),)),
@@ -48,6 +53,7 @@ ASSIGNMENT = Assignment(
         Question(
             id="Q5",
             title="Check whether a key is in a dictionary",
+            input_names=("dictionary", "key"),
             cases=(
                 Case("Q5.1", args=({"a": 1, "b": 2}, "a"), checks=(Equals(True),)),
                 Case("Q5.2", args=({"a": 1, "b": 2}, "c"), checks=(Equals(False),)),
@@ -66,6 +72,7 @@ ASSIGNMENT = Assignment(
         Question(
             id="Q6",
             title="Check whether a value is a number",
+            input_names=("value",),
             cases=(
                 Case("Q6.1", args=(1,), checks=(Equals(True),)),
                 Case("Q6.2", args=(2.2,), checks=(Equals(True),)),
@@ -77,6 +84,7 @@ ASSIGNMENT = Assignment(
         Question(
             id="Q7",
             title="Check whether a list contains an integer",
+            input_names=("values",),
             cases=(
                 Case("Q7.1", args=([2.2, "a", 4],), checks=(Equals(True),)),
                 Case("Q7.2", args=([2.2, "a", 4.0],), checks=(Equals(False),)),
@@ -86,6 +94,7 @@ ASSIGNMENT = Assignment(
         Question(
             id="Q8",
             title="Check whether a list is ordered",
+            input_names=("values",),
             cases=(
                 Case("Q8.1", args=([1, 2, 4, 3],), checks=(Equals(False),)),
                 Case("Q8.2", args=([1, 2, 3, 4],), checks=(Equals(True),)),
