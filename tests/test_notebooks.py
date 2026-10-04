@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 
+import pytest
 from ne111_checker.checks import Equals
 from ne111_checker.models import Assignment, Case, Question
 from ne111_checker.worker import run_question_for_assignment
@@ -126,3 +127,24 @@ def test_notebook_keeps_assignments_after_its_test_values(tmp_path) -> None:
     result = run_question_for_assignment(_assignment(), "Q1", submission)
 
     assert result.passed
+
+
+@pytest.mark.parametrize(
+    ("source", "passed"),
+    (
+        ("x, y = y, x\nanswer = x ** y", True),
+        ("x = 99\ny = 98\nx, y = y, x\nanswer = x ** y", True),
+        ("temp = x\nx = y\ny = temp\nanswer = x ** y", True),
+        ("x, y = y, x\nanswer = y ** x", False),
+        ("answer = x ** y", False),
+    ),
+)
+def test_a1_swap_preserves_computation_with_injected_inputs(
+    tmp_path, source: str, passed: bool
+) -> None:
+    from ne111_checker.registry import get_assignment
+
+    submission = _write_notebook(tmp_path, ["# A1Q4\n" + source])
+    result = run_question_for_assignment(get_assignment("A1"), "Q4", submission)
+
+    assert result.passed is passed

@@ -36,7 +36,17 @@ def _source_with_injected_inputs(source: str, input_names: set[str]) -> ast.Modu
             if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Store)
         }
         new_test_values = (assigned & input_names) - replaced_names
-        if accepting_test_values and new_test_values:
+        uses_inputs = (
+            bool(targets)
+            and statement.value is not None
+            and any(
+                isinstance(node, ast.Name)
+                and isinstance(node.ctx, ast.Load)
+                and node.id in input_names
+                for node in ast.walk(statement.value)
+            )
+        )
+        if accepting_test_values and new_test_values and not uses_inputs:
             replaced_names.update(new_test_values)
             continue
         accepting_test_values = False
