@@ -124,6 +124,48 @@ class TypeIs:
 
 
 @dataclass(frozen=True)
+class InsertedLetters:
+    """Validate a message with a fixed number of letters inserted after each letter."""
+
+    message: str
+    number: int
+
+    def evaluate(self, record: CallRecord) -> CheckResult:
+        failure = _unexpected_exception(record)
+        if failure:
+            return failure
+        value = record.return_value
+        if not isinstance(value, str):
+            return CheckResult(False, "Assign the encrypted message as a string")
+        expected_length = len(self.message) * (self.number + 1)
+        if len(value) != expected_length:
+            return CheckResult(
+                False,
+                f"Expected {expected_length} characters after inserting "
+                f"{self.number} letters after each original letter; got {len(value)}",
+            )
+        for index, original in enumerate(self.message):
+            position = index * (self.number + 1)
+            if value[position] != original:
+                return CheckResult(
+                    False,
+                    f"Keep original letter {original!r} at position {position} "
+                    "in the encrypted message (positions start at zero)",
+                )
+            inserted = value[position + 1 : position + self.number + 1]
+            if any(not character.isalpha() for character in inserted):
+                return CheckResult(
+                    False,
+                    "Insert only letters after each original letter; "
+                    "digits, spaces, and punctuation are not letters",
+                )
+        return CheckResult(
+            True,
+            "Preserved the original message and inserted the required letters",
+        )
+
+
+@dataclass(frozen=True)
 class UsesSyntax:
     """Check a function's parsed source for a required Python syntax node."""
 

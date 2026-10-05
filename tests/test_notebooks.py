@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 
 import pytest
+
 from ne111_checker.checks import Equals
 from ne111_checker.models import Assignment, Case, Question
 from ne111_checker.worker import run_question_for_assignment

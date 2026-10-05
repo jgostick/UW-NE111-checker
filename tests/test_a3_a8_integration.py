@@ -164,7 +164,7 @@ def A9Q5(x, y):
 """,
 }
 
-EXPECTED_CASES = {"A4": 22, "A5": 6, "A6": 14, "A7": 8, "A8": 15, "A9": 9}
+EXPECTED_CASES = {"A4": 76, "A5": 6, "A6": 14, "A7": 8, "A8": 15, "A9": 9}
 
 
 @pytest.mark.parametrize(

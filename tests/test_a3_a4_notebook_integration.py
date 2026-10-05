@@ -73,3 +73,87 @@ def test_reference_notebook_passes(assignment_id, tmp_path) -> None:
     )
 
     assert all(result.passed for result in results)
+
+
+@pytest.mark.parametrize(
+    ("question_id", "source"),
+    (
+        ("Q2", "answer = len(''.join(value.split()))"),
+        ("Q2", "answer = len(str(value).replace(' ', ''))"),
+        *(
+            (
+                "Q3",
+                "answer = "
+                + " and ".join(
+                    expression
+                    for category, expression in (
+                        ("upper", "any(c.isupper() for c in password)"),
+                        ("lower", "any(c.islower() for c in password)"),
+                        ("digit", "any(c.isdigit() for c in password)"),
+                        ("special", "any(c in '!@#$%^&' for c in password)"),
+                    )
+                    if category != missing
+                ),
+            )
+            for missing in ("upper", "lower", "digit", "special")
+        ),
+        (
+            "Q3",
+            (
+                "answer = any(c.isupper() for c in password) and "
+                "any(c.islower() for c in password) and "
+                "any(c.isdigit() for c in password) and "
+                "any(not c.isalnum() for c in password)"
+            ),
+        ),
+        ("Q4", "answer = domain in email"),
+        ("Q4", "answer = email.lower().endswith(domain.lower())"),
+        ("Q5", "answer = [name for name in filenames if extension in name]"),
+        ("Q5", "answer = [name for name in filenames if name.endswith(extension)]"),
+        (
+            "Q5",
+            (
+                "answer = [name for name in filenames "
+                "if name.lower().endswith('.' + extension.lower())]"
+            ),
+        ),
+        ("Q6", "answer = a <= b"),
+        ("Q6", "answer = int(a < b)"),
+        ("Q7", "answer = ' '.join(values)"),
+        ("Q7", "answer = ''.join(str(value) for value in values)"),
+        ("Q8", "answer = dict(pair.split(':', 1) for pair in value.split(';'))"),
+        (
+            "Q8",
+            (
+                "answer = {}\nfor pair in value.split(';'):\n"
+                "    key, item = pair.split(':')\n"
+                "    answer[key] = int(item) if item.isdigit() else item"
+            ),
+        ),
+        *(
+            (
+                "Q9",
+                (
+                    f"if mode == 'encrypt':\n    answer = {encryption}\n"
+                    "else:\n    answer = message[::number + 1]"
+                ),
+            )
+            for encryption in (
+                "'0' * (len(message) * (number + 1))",
+                "'x' * (len(message) * (number + 1))",
+                "''.join(c + '0' * number for c in message)",
+                "message",
+            )
+        ),
+        ("Q9", "answer = message[::3]"),
+    ),
+)
+def test_a4_rejects_incorrect_notebook_answers(question_id, source, tmp_path) -> None:
+    submission = tmp_path / "A4.ipynb"
+    submission.write_bytes(_notebook([f"# A4{question_id}\n{source}"]))
+
+    result = run_question_isolated("A4", question_id, submission)
+
+    assert len(result.cases) == len(get_assignment("A4").question(question_id).cases)
+    assert not result.passed
+    assert any(not case.passed for case in result.cases)
