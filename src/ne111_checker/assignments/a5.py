@@ -1,4 +1,4 @@
-"""Public checks for Assignment 5."""
+"""Public checks for notebook-based Assignment 5."""
 
 from __future__ import annotations
 
@@ -8,6 +8,7 @@ from ..models import Assignment, Case, Question, TextFixture
 ASSIGNMENT = Assignment(
     id="A5",
     title="Assignment 5",
+    notebook_submission=True,
     fixtures=(
         TextFixture("file.txt", "this\nis\na\n\n\nfile"),
         TextFixture("data.csv", "x,y\n1,4\n2,5\n3,6"),
@@ -16,17 +17,20 @@ ASSIGNMENT = Assignment(
         Question(
             "Q1",
             "Count lines in a text file",
-            (Case("Q1.1", args=("file.txt",), checks=(Equals(6),)),),
+            input_names=("filename",),
+            cases=(Case("Q1.1", args=("file.txt",), checks=(Equals(6),)),),
         ),
         Question(
             "Q2",
             "Count words in a text file",
-            (Case("Q2.1", args=("file.txt",), checks=(Equals(4),)),),
+            input_names=("filename",),
+            cases=(Case("Q2.1", args=("file.txt",), checks=(Equals(4),)),),
         ),
         Question(
             "Q3",
             "Write repeated lines to a text file",
-            (
+            input_names=("filename", "value", "repetitions"),
+            cases=(
                 Case(
                     "Q3.1",
                     args=("output.txt", "line", 3),
@@ -40,7 +44,8 @@ ASSIGNMENT = Assignment(
         Question(
             "Q4",
             "Write columnar data to a CSV file",
-            (
+            input_names=("filename", "data"),
+            cases=(
                 Case(
                     "Q4.1",
                     args=("output.csv", {"a": [9, 8, 7], "b": [6, 5, 4]}),
@@ -54,7 +59,8 @@ ASSIGNMENT = Assignment(
         Question(
             "Q5",
             "Read a CSV file into a dictionary",
-            (
+            input_names=("filename",),
+            cases=(
                 Case(
                     "Q5.1",
                     args=("data",),
@@ -65,7 +71,8 @@ ASSIGNMENT = Assignment(
         Question(
             "Q6",
             "Append a line to a text file",
-            (
+            input_names=("filename", "value"),
+            cases=(
                 Case(
                     "Q6.1",
                     args=("file.txt", "new line"),

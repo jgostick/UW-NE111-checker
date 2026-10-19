@@ -24,7 +24,7 @@ jobs:
       - run: pytest
 
   archive-install:
-    name: Archive install and A4 (${{ matrix.os }})
+    name: Archive install and notebooks (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -54,12 +54,14 @@ jobs:
           } finally {
             $env:PATH = $originalPath
           }
-      - name: Run the installed A4 checker and regression tests
+      - name: Run the installed A4/A5 checkers and regression tests
         shell: pwsh
         run: |
           python -m pip install pytest
           if ($LASTEXITCODE -ne 0) { throw "Test dependency installation failed" }
-          python -m pytest tests/test_inserted_letters.py tests/test_a3_a4_notebook_integration.py
-          if ($LASTEXITCODE -ne 0) { throw "A4 regression tests failed" }
+          python -m pytest tests/test_inserted_letters.py tests/test_a3_a4_notebook_integration.py tests/test_a5_notebook_integration.py
+          if ($LASTEXITCODE -ne 0) { throw "Notebook regression tests failed" }
           python scripts/smoke_a4.py
           if ($LASTEXITCODE -ne 0) { throw "A4 dashboard smoke test failed" }
+          python scripts/smoke_a5.py
+          if ($LASTEXITCODE -ne 0) { throw "A5 dashboard smoke test failed" }

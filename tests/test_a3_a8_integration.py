@@ -37,25 +37,6 @@ def A4Q9(message, number, mode):
         return message[::number + 1]
     raise ValueError('mode must be encrypt or decrypt')
 """,
-    "A5": """
-def A5Q1(filename):
-    with open(filename) as file: return len(file.read().splitlines())
-def A5Q2(filename):
-    with open(filename) as file: return len(file.read().split())
-def A5Q3(filename, value, repetitions):
-    with open(filename, 'w') as file:
-        for _ in range(repetitions): file.write(value.strip('\\n') + '\\n')
-def A5Q4(filename, data):
-    import pandas as pd
-    if not filename.endswith('.csv'): filename += '.csv'
-    pd.DataFrame(data).to_csv(filename, index=False)
-def A5Q5(filename):
-    import pandas as pd
-    if not filename.endswith('.csv'): filename += '.csv'
-    return pd.read_csv(filename).to_dict(orient='list')
-def A5Q6(filename, value):
-    with open(filename, 'a') as file: file.write('\\n' + value)
-""",
     "A6": """
 def A6Q1(c, start=None, stop=None, step=None):
     return c[start:stop:step]
@@ -164,7 +145,7 @@ def A9Q5(x, y):
 """,
 }
 
-EXPECTED_CASES = {"A4": 76, "A5": 6, "A6": 14, "A7": 8, "A8": 15, "A9": 9}
+EXPECTED_CASES = {"A4": 76, "A6": 14, "A7": 8, "A8": 15, "A9": 9}
 
 
 @pytest.mark.parametrize(

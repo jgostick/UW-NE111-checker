@@ -54,16 +54,18 @@ python3 -m ne111_checker A3
 </details>
 
 The checker opens in a browser. It reads the expected submission filename from
-the folder where you launched it: `A1.ipynb` through `A4.ipynb` for the notebook
+the folder where you launched it: `A1.ipynb` through `A5.ipynb` for the notebook
 assignments, and `A<N>.py` for the function-based assignments. Select a
 question tab and press its **Run** button.
 
-Notebook assignments use tagged code cells. Put `# A1Q3` through `# A4Q3` (using the
+Notebook assignments use tagged code cells. Put `# A1Q3` through `# A5Q3` (using the
 applicable assignment and question ID) on the first nonblank line of the answer cell, then
 assign the result to `answer`. The handout specifies the input-variable names;
 the checker injects a fresh set of inputs and reruns the tagged cell for every
 case. Cells tagged `# setup` run before each answer cell. Notebook outputs and
-metadata are not executed.
+metadata are not executed. For A5 file-writing questions, complete the file
+operation and assign `None` to `answer`. Each case gets fresh input files in a
+temporary working directory; the checker does not change files beside your notebook.
 
 If the file is named `A3.ipynb` and the command is run from the same directory, it
 is selected automatically. A path can also be supplied explicitly; use
