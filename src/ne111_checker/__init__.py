@@ -14,4 +14,4 @@ __all__ = [
     "run_question_with_worker",
 ]
 
-__version__ = "0.1.3"
+__version__ = "0.1.4"
