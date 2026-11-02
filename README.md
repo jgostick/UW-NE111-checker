@@ -5,7 +5,7 @@ assignments.
 
 ## Student installation
 
-Git is not required. Choose the instructions for your computer:
+Git is not required for archive installation. Choose the instructions for your computer:
 
 <details open>
 <summary><strong>Windows — Anaconda Prompt</strong></summary>
@@ -131,6 +131,31 @@ check GitHub for an updated version, add `--refresh`:
 ```console
 uvx --refresh --python 3.12 --from "git+https://github.com/jgostick/UW-NE111-checker.git@main" ne111-checker A3
 ```
+
+## Ubuntu / Linux with uv
+
+From this repository's folder, uv installs the dependencies and starts Streamlit:
+
+```console
+uv run ne111-checker A6
+```
+
+Replace `A6` with the required assignment. To run without a checkout, use the
+`uvx` command above. Open `http://localhost:8501` if the browser does not open.
+
+**Browse…** uses Zenity on GNOME/Ubuntu and KDialog on KDE when available,
+with Tkinter as a fallback. Python environments created by uv do not always
+include Tkinter, so the Linux picker does not require it when a desktop dialog
+tool is installed. On Ubuntu, install Zenity if it is missing:
+
+```console
+sudo apt install zenity
+```
+
+macOS uses its built-in file dialog; Windows uses Tkinter's native file dialog.
+The selected file is reread after each saved edit on all platforms. If a desktop
+dialog is unavailable (for example, over SSH), enter the file's full path in the
+app's fallback field or supply `--submission /full/path/to/A6.py` at launch.
 
 ## Development
 
