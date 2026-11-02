@@ -106,12 +106,12 @@ def test_a5_student_app_uses_notebook_inputs_and_checks_file_writes(
     assert spec is not None and spec.origin is not None
 
     app = AppTest.from_file(Path(spec.origin)).run(timeout=20)
-    assert app.button[3].label == "Run A5Q4 cell"
+    assert app.button(key="run-Q4").label == "Run A5Q4 cell"
     assert any(
         'filename = "' in code.value or "filename = '" in code.value
         for code in app.code
     )
-    app.button[3].click().run(timeout=20)
+    app.button(key="run-Q4").click().run(timeout=20)
 
     assert not app.exception
     assert not app.error

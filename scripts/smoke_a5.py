@@ -86,7 +86,7 @@ def main() -> None:
                 spec = importlib.util.find_spec("ne111_checker.student_app")
                 assert spec is not None and spec.origin is not None
                 app = AppTest.from_file(Path(spec.origin)).run(timeout=20)
-                app.button[2].click().run(timeout=20)
+                app.button(key="run-Q3").click().run(timeout=20)
                 assert not app.exception
                 assert not app.error
                 assert len(app.success) == 2

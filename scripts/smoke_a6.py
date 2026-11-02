@@ -13,6 +13,7 @@ import time
 import urllib.error
 import urllib.request
 from pathlib import Path
+from unittest.mock import patch
 
 from streamlit.testing.v1 import AppTest
 
@@ -20,7 +21,11 @@ from streamlit.testing.v1 import AppTest
 def main() -> None:
     with tempfile.TemporaryDirectory(prefix="ne111-a6-smoke-") as temporary:
         directory = Path(temporary)
-        submission = directory / "A6.py"
+        submissions = directory / "Saved assignments"
+        submissions.mkdir()
+        launch = directory / "Launch folder"
+        launch.mkdir()
+        submission = submissions / "A6.py"
         # Q6's calculation is supplied in the handout; this is a synthetic file.
         submission.write_text(
             "def A6Q6(a, b, c=0):\n"
@@ -48,7 +53,7 @@ def main() -> None:
                     "--port",
                     str(port),
                 ],
-                cwd=directory,
+                cwd=launch,
                 stdout=log,
                 stderr=subprocess.STDOUT,
                 start_new_session=os.name != "nt",
@@ -71,15 +76,26 @@ def main() -> None:
                     raise AssertionError("The checker did not become healthy")
 
                 os.environ["NE111_GRADER_ASSIGNMENT"] = "A6"
-                os.environ["NE111_GRADER_SUBMISSION"] = str(submission)
+                os.environ["NE111_GRADER_SUBMISSION"] = str(launch / "A6.py")
                 spec = importlib.util.find_spec("ne111_checker.student_app")
                 assert spec is not None and spec.origin is not None
                 app = AppTest.from_file(Path(spec.origin)).run(timeout=20)
-                app.button[5].click().run(timeout=20)
+                assert app.button(key="run-Q6").disabled
+                # CI has no interactive desktop; verify the Browse callback
+                # using the same path a successful native dialog returns.
+                with patch(
+                    "ne111_checker.file_picker.open_file_dialog",
+                    return_value=submission,
+                ):
+                    app.button(key="browse-submission").click().run(timeout=20)
+                assert not app.exception
+                app.button(key="run-Q6").click().run(timeout=20)
                 assert not app.exception
                 assert not app.error
                 assert len(app.success) == 2
-                print("Installed A6 CLI is healthy; Q6 returns its result from A6.py.")
+                print(
+                    "Installed A6 CLI is healthy; Q6 reads the selected external file."
+                )
             except BaseException:
                 log.seek(0)
                 print(log.read(), file=sys.stderr)

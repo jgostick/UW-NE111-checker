@@ -53,14 +53,21 @@ python3 -m ne111_checker A3
 
 </details>
 
-The checker opens in a browser. It reads the expected submission filename from
-the folder where you launched it: `A1.ipynb` through `A5.ipynb` for the notebook
-assignments, and `A<N>.py` for the function-based assignments. Select a
-question tab and press its **Run** button.
+The checker opens in a browser. Click **Browse…** to open your computer's
+standard file dialog, select your saved assignment file, and click **Open**.
+Use `A1.ipynb` through `A5.ipynb`
+for the notebook assignments, and `A<N>.py` for the function-based assignments.
+You can launch the checker from any folder. Select a question tab and press
+its **Run** button.
+
+The checker remembers the selected file for the session and rereads it each
+time you run a question. Save your changes in your editor before running
+again; you do not need to select the file again after each edit.
 
 Starting with Assignment 6, submit a Python file instead of a notebook. For
 example, save `A6.py` with top-level definitions named `A6Q1` through `A6Q6`,
-then run `python -m ne111_checker A6` (`python3` on macOS) from that folder.
+then run `python -m ne111_checker A6` (`python3` on macOS) and select that file
+using **Browse…**.
 Use the signatures in the handout and return each result from the function.
 Keep your own test calls inside an `if __name__ == "__main__":` block.
 Notebook cell tags and the variable `answer` are not required in `.py` files.

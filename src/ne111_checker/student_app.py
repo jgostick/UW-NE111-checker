@@ -7,6 +7,7 @@ from pathlib import Path
 
 import streamlit as st
 
+from ne111_checker.file_picker import submission_picker
 from ne111_checker.isolated import run_question_isolated
 from ne111_checker.registry import get_assignment
 
@@ -39,13 +40,18 @@ st.set_page_config(page_title=f"{assignment.id} Checker", page_icon="✅")
 st.title(f"{assignment.title} Checker")
 st.caption("Each question runs in a separate process with a five-second timeout.")
 
-configured_submission = Path(default_submission).expanduser()
+configured_submission = submission_picker(
+    Path(default_submission).expanduser(), assignment.expected_filename
+)
 
-if configured_submission.is_file():
-    submission_key = (
-        f"{configured_submission.resolve()}-{configured_submission.stat().st_mtime_ns}"
-    )
-    submission_label = configured_submission.name
+try:
+    submission_stat = configured_submission.stat()
+    available = configured_submission.is_file()
+except OSError:
+    available = False
+
+if available:
+    submission_key = f"{configured_submission.resolve()}-{submission_stat.st_mtime_ns}"
     submission_path = configured_submission
     st.caption(
         f"Using `{configured_submission}`. Save the file, then run a question again "
@@ -53,11 +59,10 @@ if configured_submission.is_file():
     )
 else:
     submission_key = "none"
-    submission_label = "Notebook not found"
     submission_path = None
     st.info(
-        f"Save `{assignment.expected_filename}` in the folder where you launched "
-        "the checker, then restart the checker."
+        f"Click Browse… to select your saved `{assignment.expected_filename}`. "
+        "You can launch the checker from any folder."
     )
 
 tabs = st.tabs([question.id for question in assignment.questions])

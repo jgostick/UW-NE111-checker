@@ -89,7 +89,7 @@ def main() -> None:
                 spec = importlib.util.find_spec("ne111_checker.student_app")
                 assert spec is not None and spec.origin is not None
                 app = AppTest.from_file(Path(spec.origin)).run(timeout=20)
-                app.button[8].click().run(timeout=20)
+                app.button(key="run-Q9").click().run(timeout=20)
                 assert not app.exception
                 assert any("original letter" in error.value for error in app.error)
                 print("Installed A4 CLI is healthy; Q9 rejects incorrect encryption.")

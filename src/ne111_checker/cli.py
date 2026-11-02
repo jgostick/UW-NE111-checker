@@ -17,7 +17,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--submission",
         type=Path,
-        help="Submission file (defaults to the assignment filename in the current directory)",
+        help="Preselect a submission file (or select one with Browse in the app)",
     )
     parser.add_argument("--port", type=int, default=None)
     parser.add_argument("--headless", action="store_true")
