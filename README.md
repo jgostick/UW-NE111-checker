@@ -58,6 +58,13 @@ the folder where you launched it: `A1.ipynb` through `A5.ipynb` for the notebook
 assignments, and `A<N>.py` for the function-based assignments. Select a
 question tab and press its **Run** button.
 
+Starting with Assignment 6, submit a Python file instead of a notebook. For
+example, save `A6.py` with top-level definitions named `A6Q1` through `A6Q6`,
+then run `python -m ne111_checker A6` (`python3` on macOS) from that folder.
+Use the signatures in the handout and return each result from the function.
+Keep your own test calls inside an `if __name__ == "__main__":` block.
+Notebook cell tags and the variable `answer` are not required in `.py` files.
+
 Notebook assignments use tagged code cells. Put `# A1Q3` through `# A5Q3` (using the
 applicable assignment and question ID) on the first nonblank line of the answer cell, then
 assign the result to `answer`. The handout specifies the input-variable names;

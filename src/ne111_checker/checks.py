@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
+import pycodestyle
 from numpy.testing import assert_allclose, assert_equal
 
 from .models import CallRecord, CheckResult
@@ -286,6 +287,40 @@ def _call_name(node: ast.AST) -> str | None:
     if isinstance(node.func, ast.Attribute):
         return node.func.attr
     return None
+
+
+@dataclass(frozen=True)
+class Pep8Whitespace:
+    """Check whitespace conventions without requiring one exact source string."""
+
+    def evaluate(self, record: CallRecord) -> CheckResult:
+        if not record.source:
+            return CheckResult(False, "Could not inspect the function source")
+
+        messages: list[str] = []
+
+        class Report(pycodestyle.BaseReport):
+            def error(self, line_number, offset, text, check):
+                code = super().error(line_number, offset, text, check)
+                if code:
+                    messages.append(f"Line {line_number}, column {offset + 1}: {text}")
+                return code
+
+        style = pycodestyle.StyleGuide(
+            select=("E1", "E2", "E3", "W1", "W2", "W3"),
+            reporter=Report,
+            # Set spacing options explicitly, independent of editor configuration.
+            indent_size=4,
+            hang_closing=False,
+        )
+        source = textwrap.dedent(record.source)
+        checker = pycodestyle.Checker(
+            lines=source.splitlines(keepends=True), options=style.options
+        )
+        checker.check_all()
+        if messages:
+            return CheckResult(False, "\n".join(messages))
+        return CheckResult(True, "Function whitespace follows PEP 8")
 
 
 @dataclass(frozen=True)

@@ -2,15 +2,17 @@
 
 from __future__ import annotations
 
-from ..checks import Approx, DocstringContains, Equals, Raises, SourceEquals
-from ..models import Assignment, Case, Question
+import ast
 
-_FORMATTED_Q3 = """
-def A6Q3(a, b=1, c=5):
-    ans1 = (-b + (b**2 - 4 * a * c) ** 0.5) / (2 * a)  # One root
-    ans2 = (-b - (b**2 - 4 * a * c) ** 0.5) / (2 * a)  # The other root
-    return (ans1, ans2)
-"""
+from ..checks import (
+    Approx,
+    DocstringContains,
+    Equals,
+    Pep8Whitespace,
+    Raises,
+    UsesSyntax,
+)
+from ..models import Assignment, Case, Question
 
 ASSIGNMENT = Assignment(
     id="A6",
@@ -26,7 +28,11 @@ ASSIGNMENT = Assignment(
                     kwargs={"c": "abcdefghi", "start": -4, "stop": 2, "step": -1},
                     checks=(Equals("fed"),),
                 ),
-                Case("Q1.3", args=([1, 2, 3],), checks=(Equals([1, 2, 3]),)),
+                Case(
+                    "Q1.3",
+                    args=([1, 2, 3],),
+                    checks=(Equals([1, 2, 3]), UsesSyntax(ast.Slice, "slice notation")),
+                ),
             ),
         ),
         Question(
@@ -52,7 +58,7 @@ ASSIGNMENT = Assignment(
                 Case(
                     "Q3.1",
                     args=(1, -3, 2),
-                    checks=(Approx((2, 1)), SourceEquals(_FORMATTED_Q3)),
+                    checks=(Approx((2, 1)), Pep8Whitespace()),
                 ),
             ),
         ),
@@ -73,6 +79,8 @@ ASSIGNMENT = Assignment(
                 Case("Q5.2", args=(3, 3), checks=(Equals(9),)),
                 Case("Q5.3", args=(2,), checks=(Equals(2),)),
                 Case("Q5.4", args=(1, 2, 3, 4, 5), checks=(Raises(TypeError),)),
+                Case("Q5.5", args=(2, 3, 4, 5), checks=(Equals(120),)),
+                Case("Q5.6", checks=(Raises(TypeError),)),
             ),
         ),
         Question(
@@ -84,7 +92,7 @@ ASSIGNMENT = Assignment(
                     args=(3, 4),
                     checks=(
                         Approx(5),
-                        DocstringContains(("Parameters", "Returns", "a : float")),
+                        DocstringContains(("Parameters", "Returns")),
                     ),
                 ),
             ),

@@ -145,7 +145,7 @@ def A9Q5(x, y):
 """,
 }
 
-EXPECTED_CASES = {"A4": 76, "A6": 14, "A7": 8, "A8": 15, "A9": 9}
+EXPECTED_CASES = {"A4": 76, "A6": 16, "A7": 8, "A8": 15, "A9": 9}
 
 
 @pytest.mark.parametrize(
@@ -164,3 +164,28 @@ def test_reference_submission_passes(assignment_id, tmp_path) -> None:
 
     assert all(result.passed for result in results)
     assert sum(len(result.cases) for result in results) == EXPECTED_CASES[assignment_id]
+
+
+@pytest.mark.parametrize(
+    ("question_id", "original", "replacement", "should_pass"),
+    (
+        ("Q3", "return (ans1, ans2)", "return ans1, ans2", True),
+        ("Q3", "b**2", "b ** 2", True),
+        ("Q3", "ans1 =", "ans1=", False),
+        ("Q6", "a : float", "a : int or float", True),
+        ("Q6", "Parameters", "Inputs", False),
+        ("Q1", "def A6Q1(", "def other_name(", False),
+        ("Q5", "a, b=1, c=1, d=1", "a=1, b=1, c=1, d=1", False),
+    ),
+)
+def test_a6_function_requirements(
+    tmp_path, question_id, original, replacement, should_pass
+) -> None:
+    submission = tmp_path / "A6.py"
+    submission.write_text(
+        SOURCES["A6"].replace(original, replacement), encoding="utf-8"
+    )
+
+    result = run_question_isolated("A6", question_id, submission, timeout=10)
+
+    assert result.passed is should_pass, result.to_dict()
