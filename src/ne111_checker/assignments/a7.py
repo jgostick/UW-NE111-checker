@@ -6,7 +6,7 @@ import ast
 
 import numpy as np
 
-from ..checks import Approx, AvoidsSyntax, DTypeIs, Equals
+from ..checks import Approx, AvoidsSyntax, DTypeIs, Equals, ItemAt, TypeIs, UsesSyntax
 from ..models import Assignment, Case, Question
 
 ASSIGNMENT = Assignment(
@@ -20,7 +20,20 @@ ASSIGNMENT = Assignment(
                 Case(
                     "Q1.1",
                     args=(np.array([2.2, 4.8, 0.9, 3.0]),),
-                    checks=(Equals(np.array([2, 4, 0, 3])), DTypeIs(int)),
+                    checks=(
+                        Equals(np.array([2, 4, 0, 3])),
+                        TypeIs(np.ndarray),
+                        DTypeIs(int),
+                    ),
+                ),
+                Case(
+                    "Q1.2",
+                    args=(np.array([[-2.8, 0.9], [3.0, -0.9]]),),
+                    checks=(
+                        Equals(np.array([[-2, 0], [3, 0]])),
+                        TypeIs(np.ndarray),
+                        DTypeIs(int),
+                    ),
                 ),
             ),
         ),
@@ -41,6 +54,7 @@ ASSIGNMENT = Assignment(
                                 ]
                             )
                         ),
+                        TypeIs(np.ndarray),
                     ),
                 ),
             ),
@@ -59,6 +73,14 @@ ASSIGNMENT = Assignment(
                                 [np.array([[3, 4, 5]]), np.array([[8, 9]])],
                             ]
                         ),
+                        TypeIs(list),
+                        ItemAt(0, TypeIs(list)),
+                        ItemAt(1, TypeIs(list)),
+                        ItemAt(0, ItemAt(0, TypeIs(np.ndarray))),
+                        ItemAt(0, ItemAt(1, TypeIs(np.ndarray))),
+                        ItemAt(1, ItemAt(0, TypeIs(np.ndarray))),
+                        ItemAt(1, ItemAt(1, TypeIs(np.ndarray))),
+                        UsesSyntax(ast.Slice, "slice notation"),
                     ),
                 ),
             ),
@@ -70,7 +92,11 @@ ASSIGNMENT = Assignment(
                 Case(
                     "Q4.1",
                     args=([[4, 6, 2], [5, 4, 7]], 5),
-                    checks=(Equals((3, 1, 2)), AvoidsSyntax(ast.For, "a for loop")),
+                    checks=(
+                        Equals((3, 1, 2)),
+                        TypeIs(tuple),
+                        AvoidsSyntax(ast.For, "a for loop"),
+                    ),
                 ),
             ),
         ),
@@ -83,6 +109,7 @@ ASSIGNMENT = Assignment(
                     args=([[1, 4, -2], [-2, 0, 1]],),
                     checks=(
                         Approx(np.array([[0.5, 1.0, 0.0], [0.0, 1.0 / 3.0, 0.5]])),
+                        TypeIs(np.ndarray),
                     ),
                 ),
             ),
@@ -98,7 +125,10 @@ ASSIGNMENT = Assignment(
                             [[3, 5, 2, 4], [2, 6, 1, 5], [2, 4, 4, 8], [1, 1, 5, 3]]
                         ),
                     ),
-                    checks=(Equals(np.array([[3, 6, 5, 8], [1, 1, 1, 3]])),),
+                    checks=(
+                        Equals(np.array([[3, 6, 5, 8], [1, 1, 1, 3]])),
+                        TypeIs(np.ndarray),
+                    ),
                 ),
             ),
         ),
@@ -109,7 +139,25 @@ ASSIGNMENT = Assignment(
                 Case(
                     "Q7.1",
                     args=(np.array([1, 2, 3]), np.array([[4, 5, 6], [7, 8, 9]])),
-                    checks=(Equals(np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])),),
+                    checks=(
+                        Equals(np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])),
+                        TypeIs(np.ndarray),
+                    ),
+                ),
+                Case(
+                    "Q7.2",
+                    args=([1, 2, 3], [4, 5]),
+                    checks=(Equals(np.array([1, 2, 3, 4, 5])), TypeIs(np.ndarray)),
+                ),
+                Case(
+                    "Q7.3",
+                    args=([1, 2], [4, 5]),
+                    checks=(Equals(None),),
+                ),
+                Case(
+                    "Q7.4",
+                    args=(np.ones((2, 3)), np.ones((3, 2))),
+                    checks=(Equals(None),),
                 ),
             ),
         ),

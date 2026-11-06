@@ -6,7 +6,7 @@ import ast
 
 import numpy as np
 
-from ..checks import Approx, AvoidsCall, AvoidsSyntax, Equals, UsesSymbol
+from ..checks import Approx, AvoidsCall, AvoidsSyntax, Equals, ItemAt, TypeIs
 from ..models import Assignment, Case, Question
 
 ASSIGNMENT = Assignment(
@@ -42,20 +42,43 @@ ASSIGNMENT = Assignment(
                 Case(
                     "Q2.1",
                     args=(np.arange(4), np.arange(4, 8), "+"),
-                    checks=(Equals(np.array([4, 6, 8, 10])),),
+                    checks=(Equals(np.array([4, 6, 8, 10])), TypeIs(np.ndarray)),
                 ),
                 Case(
                     "Q2.2",
                     args=(np.arange(4), np.arange(4, 8), "*"),
-                    checks=(Equals(np.array([0, 5, 12, 21])),),
+                    checks=(Equals(np.array([0, 5, 12, 21])), TypeIs(np.ndarray)),
                 ),
                 Case(
                     "Q2.3",
-                    args=(np.arange(4), np.arange(4, 8), "//"),
+                    args=(np.array([-7, 7, 8, 9]), np.array([3, 3, 2, 4]), "//"),
                     checks=(
-                        Equals(np.array([0, 0, 0, 0])),
-                        UsesSymbol("floor_divide"),
+                        Equals(np.array([-3, 2, 4, 2])),
+                        TypeIs(np.ndarray),
                     ),
+                ),
+                Case(
+                    "Q2.4",
+                    args=(np.arange(4), np.arange(4, 8), "-"),
+                    checks=(Equals(np.array([-4, -4, -4, -4])), TypeIs(np.ndarray)),
+                ),
+                Case(
+                    "Q2.5",
+                    args=(np.arange(4), np.arange(4, 8), "/"),
+                    checks=(
+                        Approx(np.array([0, 0.2, 1 / 3, 3 / 7])),
+                        TypeIs(np.ndarray),
+                    ),
+                ),
+                Case(
+                    "Q2.6",
+                    args=(np.arange(4), np.arange(4, 8), "%"),
+                    checks=(Equals(np.array([0, 1, 2, 3])), TypeIs(np.ndarray)),
+                ),
+                Case(
+                    "Q2.7",
+                    args=(np.arange(4), np.arange(4, 8), "**"),
+                    checks=(Equals(np.array([0, 1, 64, 2187])), TypeIs(np.ndarray)),
                 ),
             ),
         ),
@@ -66,7 +89,12 @@ ASSIGNMENT = Assignment(
                 Case(
                     "Q3.1",
                     args=(np.array([[0.3, 0.2], [0.8, 0.3], [0.4, 0.7], [0.2, 0.5]]),),
-                    checks=(Approx(((0.2, 0.2), (0.8, 0.7))),),
+                    checks=(
+                        Approx(((0.2, 0.2), (0.8, 0.7))),
+                        TypeIs(tuple),
+                        ItemAt(0, TypeIs(tuple)),
+                        ItemAt(1, TypeIs(tuple)),
+                    ),
                 ),
             ),
         ),
@@ -82,6 +110,7 @@ ASSIGNMENT = Assignment(
                             np.array([0.544493, 0.43825, 0.664016, -0.265606]),
                             rtol=1e-5,
                         ),
+                        TypeIs(np.ndarray),
                     ),
                 ),
             ),
@@ -93,7 +122,10 @@ ASSIGNMENT = Assignment(
                 Case(
                     "Q5.1",
                     args=(np.arange(16).reshape((4, 4)), np.arange(100, 104)),
-                    checks=(Equals(np.array([614, 2238, 3862, 5486])),),
+                    checks=(
+                        Equals(np.array([614, 2238, 3862, 5486])),
+                        TypeIs(np.ndarray),
+                    ),
                 ),
                 Case(
                     "Q5.2",
@@ -101,7 +133,10 @@ ASSIGNMENT = Assignment(
                         np.arange(16).reshape((4, 4)),
                         np.arange(100, 104).reshape((4, 1)),
                     ),
-                    checks=(Equals(np.array([614, 2238, 3862, 5486])),),
+                    checks=(
+                        Equals(np.array([614, 2238, 3862, 5486])),
+                        TypeIs(np.ndarray),
+                    ),
                 ),
             ),
         ),
@@ -112,12 +147,17 @@ ASSIGNMENT = Assignment(
                 Case(
                     "Q6.1",
                     args=(np.arange(16).reshape((4, 4)),),
-                    checks=(Equals(30),),
+                    checks=(
+                        Equals(30),
+                        AvoidsCall("trace"),
+                        AvoidsSyntax(ast.For, "a for loop"),
+                    ),
                 ),
                 Case(
                     "Q6.2",
-                    args=(np.arange(16).reshape((4, 4)),),
+                    args=(np.array([[1, 2], [3, 4]]),),
                     checks=(
+                        Equals(5),
                         AvoidsCall("trace"),
                         AvoidsSyntax(ast.For, "a for loop"),
                     ),
@@ -144,6 +184,21 @@ ASSIGNMENT = Assignment(
                             [[1, 2, 3, 4], [3, 2, 3, 4], [3, 0, 3, 4], [1, 0, 1, 4]]
                         ),
                     ),
+                    checks=(Equals(False),),
+                ),
+                Case(
+                    "Q7.3",
+                    args=(np.array([[1, 0, 0], [2, 3, 0], [4, 5, 6]]),),
+                    checks=(Equals(True),),
+                ),
+                Case(
+                    "Q7.4",
+                    args=(np.array([[1, 2], [5e-9, 3]]),),
+                    checks=(Equals(True),),
+                ),
+                Case(
+                    "Q7.5",
+                    args=(np.array([[1, 2], [5e-8, 3]]),),
                     checks=(Equals(False),),
                 ),
             ),
