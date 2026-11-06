@@ -29,7 +29,12 @@ def open_file_dialog(initial_directory: Path, expected_name: str) -> Path | None
         if filename is not None and not isinstance(filename, str):
             raise TypeError("The system file dialog returned an invalid path.")
     except (OSError, subprocess.CalledProcessError, ValueError, TypeError) as error:
-        raise RuntimeError("The system file dialog could not be opened.") from error
+        message = "The system file dialog could not be opened."
+        if sys.platform.startswith("linux"):
+            message += (
+                " On Ubuntu, install a file picker with: sudo apt install zenity."
+            )
+        raise RuntimeError(message) from error
     if not filename:
         return None
     path = Path(filename).resolve()

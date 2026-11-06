@@ -227,7 +227,7 @@ class UsesCall:
 
 @dataclass(frozen=True)
 class UsesSymbol:
-    """Check for a name or attribute reference, including indirect calls."""
+    """Check for a symbol reference, including imported members and aliases."""
 
     name: str
 
@@ -238,8 +238,18 @@ class UsesSymbol:
         tree, error = _parse_source(record)
         if error:
             return error
+        names = {self.name}
+        for node in ast.walk(tree):
+            if isinstance(node, ast.ImportFrom) and node.module == self.name:
+                names.update(alias.asname or alias.name for alias in node.names)
+            elif isinstance(node, ast.Import):
+                names.update(
+                    alias.asname or alias.name
+                    for alias in node.names
+                    if alias.name == self.name
+                )
         found = any(
-            (isinstance(node, ast.Name) and node.id == self.name)
+            (isinstance(node, ast.Name) and node.id in names)
             or (isinstance(node, ast.Attribute) and node.attr == self.name)
             for node in ast.walk(tree)
         )

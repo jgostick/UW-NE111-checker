@@ -71,3 +71,10 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw "A7 dashboard smoke test failed" }
           python scripts/smoke_a8.py
           if ($LASTEXITCODE -ne 0) { throw "A8 dashboard smoke test failed" }
+      - name: Exercise the installed Linux native file dialog
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes zenity xvfb xdotool
+          xvfb-run --auto-servernum python scripts/smoke_linux_file_dialog.py

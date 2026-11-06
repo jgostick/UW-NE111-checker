@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -43,6 +44,53 @@ end run
         )
         return result.stdout.removesuffix("\n")
 
+    if sys.platform.startswith("linux"):
+        filename = _choose_linux_file(initial_directory, expected_name)
+        if filename is not None:
+            return filename
+
+    return _choose_tk_file(initial_directory, expected_name)
+
+
+def _choose_linux_file(initial_directory: str, expected_name: str) -> str | None:
+    """Use desktop tools without requiring Tk in the active Python install."""
+    suffix = Path(expected_name).suffix
+    commands = {
+        "zenity": [
+            "--file-selection",
+            "--title=Choose your assignment file",
+            f"--filename={initial_directory.rstrip('/')}/",
+            f"--file-filter=Assignment files ({suffix}) | *{suffix}",
+        ],
+        "kdialog": [
+            "--title",
+            "Choose your assignment file",
+            "--getopenfilename",
+            initial_directory,
+            f"*{suffix}",
+        ],
+    }
+    if "KDE" in os.environ.get("XDG_CURRENT_DESKTOP", "").upper().split(":"):
+        commands = dict(reversed(tuple(commands.items())))
+    for name, arguments in commands.items():
+        executable = shutil.which(name)
+        if executable is None:
+            continue
+        try:
+            result = subprocess.run(
+                [executable, *arguments], capture_output=True, text=True, check=False
+            )
+        except OSError:
+            continue
+        if result.returncode == 0:
+            return result.stdout.removesuffix("\n")
+        if result.returncode == 1:
+            return ""  # Cancel must not open another dialog.
+    return None  # No desktop tool succeeded; try Tk instead.
+
+
+def _choose_tk_file(initial_directory: str, expected_name: str) -> str:
+    """Use the Windows native dialog, or Tk as a desktop fallback."""
     import _tkinter
 
     # Some standalone Python builds keep these resources under the base

@@ -13,16 +13,16 @@ from .models import CallRecord, Case, CaseResult
 
 
 def _source_with_injected_inputs(source: str, input_names: set[str]) -> ast.Module:
-    """Remove top-level student test-value assignments before grading a cell."""
+    """Replace sample declarations until the cell starts using its inputs.
+
+    Unrelated initializers and repeated declarations are still sample setup.
+    Once a statement uses an input, retain subsequent assignments so that
+    computations such as swaps and explicit resets keep their meaning.
+    """
     tree = ast.parse(source)
     body = []
-    accepting_test_values = True
-    replaced_names: set[str] = set()
+    using_inputs = False
     for statement in tree.body:
-        if isinstance(statement, (ast.Import, ast.ImportFrom)):
-            body.append(statement)
-            continue
-
         targets: list[ast.expr] = []
         if isinstance(statement, ast.Assign):
             targets = statement.targets
@@ -35,7 +35,6 @@ def _source_with_injected_inputs(source: str, input_names: set[str]) -> ast.Modu
             for node in ast.walk(target)
             if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Store)
         }
-        new_test_values = (assigned & input_names) - replaced_names
         uses_inputs = (
             bool(targets)
             and statement.value is not None
@@ -43,14 +42,21 @@ def _source_with_injected_inputs(source: str, input_names: set[str]) -> ast.Modu
                 isinstance(node, ast.Name)
                 and isinstance(node.ctx, ast.Load)
                 and node.id in input_names
-                for node in ast.walk(statement.value)
+                for node in ast.walk(statement)
             )
         )
-        if accepting_test_values and new_test_values and not uses_inputs:
-            replaced_names.update(new_test_values)
+        if (
+            not using_inputs
+            and assigned & input_names
+            and statement.value is not None
+            and not uses_inputs
+        ):
             continue
-        accepting_test_values = False
         body.append(statement)
+        using_inputs = using_inputs or any(
+            isinstance(node, ast.Name) and node.id in input_names
+            for node in ast.walk(statement)
+        )
     tree.body = body
     return ast.fix_missing_locations(tree)
 

@@ -119,6 +119,44 @@ def test_notebook_replaces_test_values_after_an_import(tmp_path) -> None:
     assert result.passed
 
 
+@pytest.mark.parametrize(
+    "source",
+    (
+        "answer = 0\nvalue = 99\nanswer = value * 3",
+        "factor = 3\nvalue = 99\nanswer = value * factor",
+        "value = 99\nvalue = 100\nanswer = value * 3",
+        "value = 99\nfactor = 3\nvalue = 100\nanswer = value * factor",
+        "answer = 0\nvalue: int = 99\nanswer = value * 3",
+        "answer, value = None, 99\nanswer = value * 3",
+        "import math\nfactor = 3\nvalue = float('99')\nanswer = value * factor",
+    ),
+)
+def test_notebook_replaces_sample_inputs_among_initializers(tmp_path, source) -> None:
+    submission = _write_notebook(tmp_path, ["# A99Q1\n" + source])
+
+    result = run_question_for_assignment(_assignment(), "Q1", submission)
+
+    assert result.passed
+
+
+@pytest.mark.parametrize(
+    "source",
+    (
+        "original = value\nvalue = 0\nanswer = (original + value) * 3",
+        "value *= 3\nanswer = value\nvalue = 0\nanswer += value",
+        "alias = value\nvalue = alias * 3\nanswer = value",
+    ),
+)
+def test_notebook_keeps_input_assignments_after_computation_starts(
+    tmp_path, source
+) -> None:
+    submission = _write_notebook(tmp_path, ["# A99Q1\n" + source])
+
+    result = run_question_for_assignment(_assignment(), "Q1", submission)
+
+    assert result.passed
+
+
 def test_notebook_keeps_assignments_after_its_test_values(tmp_path) -> None:
     submission = _write_notebook(
         tmp_path,
@@ -147,5 +185,51 @@ def test_a1_swap_preserves_computation_with_injected_inputs(
 
     submission = _write_notebook(tmp_path, ["# A1Q4\n" + source])
     result = run_question_for_assignment(get_assignment("A1"), "Q4", submission)
+
+    assert result.passed is passed
+
+
+@pytest.mark.parametrize(
+    ("source", "passed"),
+    (
+        (
+            (
+                "import math\n"
+                "answer = math.ceil(value) + math.floor(value) + math.log10(value)"
+            ),
+            True,
+        ),
+        (
+            (
+                "from math import ceil, floor, log10\n"
+                "answer = ceil(value) + floor(value) + log10(value)"
+            ),
+            True,
+        ),
+        (
+            (
+                "from math import ceil as c, floor as f, log10 as l\n"
+                "answer = c(value) + f(value) + l(value)"
+            ),
+            True,
+        ),
+        (
+            (
+                "import math as m\n"
+                "answer = m.ceil(value) + m.floor(value) + m.log10(value)"
+            ),
+            True,
+        ),
+        (
+            "from math import ceil, floor, log10\nanswer = 9.681241237375587",
+            False,
+        ),
+    ),
+)
+def test_a1_math_library_import_styles(tmp_path, source: str, passed: bool) -> None:
+    from ne111_checker.registry import get_assignment
+
+    submission = _write_notebook(tmp_path, ["# A1Q6\n" + source])
+    result = run_question_for_assignment(get_assignment("A1"), "Q6", submission)
 
     assert result.passed is passed
