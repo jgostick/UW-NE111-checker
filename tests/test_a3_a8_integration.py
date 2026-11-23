@@ -126,26 +126,9 @@ def A8Q7(matrix):
     matrix = np.asarray(matrix)
     return np.allclose(matrix, np.triu(matrix)) or np.allclose(matrix, np.tril(matrix))
 """,
-    "A9": """
-import numpy as np
-import matplotlib.pyplot as plt
-def A9Q1(x, y):
-    figure, axes = plt.subplots(); axes.scatter(x, y); return figure, axes
-def A9Q2(*arrays):
-    figure, axes = plt.subplots(1, len(arrays))
-    for axis, array in zip(axes, arrays): axis.hist(array)
-    return figure, axes
-def A9Q3(image):
-    figure, axes = plt.subplots(); axes.imshow(image); return figure, axes
-def A9Q4(figure, color): figure.set_facecolor(color); return figure
-def A9Q5(x, y):
-    x, y = np.asarray(x), np.asarray(y)
-    valid = (x >= 0) & (x <= 1) & (y >= 0) & (y <= 1)
-    figure, axes = plt.subplots(); axes.scatter(x[valid], y[valid]); return figure, axes
-""",
 }
 
-EXPECTED_CASES = {"A4": 76, "A6": 16, "A7": 12, "A8": 22, "A9": 9}
+EXPECTED_CASES = {"A4": 76, "A6": 16, "A7": 12, "A8": 22}
 
 
 @pytest.mark.parametrize(

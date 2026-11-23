@@ -1,7 +1,8 @@
-"""Exercise an installed A8 checker through its CLI and Streamlit interface."""
+"""Exercise an installed function-based checker through its CLI and UI."""
 
 from __future__ import annotations
 
+import argparse
 import importlib.util
 import os
 import signal
@@ -17,19 +18,34 @@ from unittest.mock import patch
 
 from streamlit.testing.v1 import AppTest
 
+_SUBMISSIONS = {
+    # These files answer only the public example.
+    "A8": "def A8Q3(arr):\n    return ((0.2, 0.2), (0.8, 0.7))\n",
+    "A9": (
+        "from matplotlib.figure import Figure\n\n"
+        "def A9Q3(im):\n"
+        "    fig = Figure()\n"
+        "    ax = fig.add_subplot()\n"
+        "    ax.imshow([[0, 1, 2], [3, 4, 5]])\n"
+        "    return fig, ax\n"
+    ),
+}
+
 
 def main() -> None:
-    with tempfile.TemporaryDirectory(prefix="ne111-a8-smoke-") as temporary:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("assignment", choices=_SUBMISSIONS)
+    assignment = parser.parse_args().assignment
+    with tempfile.TemporaryDirectory(
+        prefix=f"ne111-{assignment.lower()}-smoke-"
+    ) as temporary:
         directory = Path(temporary)
         submissions = directory / "Saved assignments"
         submissions.mkdir()
         launch = directory / "Launch folder"
         launch.mkdir()
-        submission = submissions / "A8.py"
-        # This constant answers only the handout example, not arbitrary inputs.
-        submission.write_text(
-            "def A8Q3(arr):\n    return ((0.2, 0.2), (0.8, 0.7))\n", encoding="utf-8"
-        )
+        submission = submissions / f"{assignment}.py"
+        submission.write_text(_SUBMISSIONS[assignment], encoding="utf-8")
         with socket.socket() as listener:
             listener.bind(("127.0.0.1", 0))
             port = listener.getsockname()[1]
@@ -40,7 +56,7 @@ def main() -> None:
                     sys.executable,
                     "-m",
                     "ne111_checker",
-                    "A8",
+                    assignment,
                     "--headless",
                     "--port",
                     str(port),
@@ -67,8 +83,8 @@ def main() -> None:
                 else:
                     raise AssertionError("The checker did not become healthy")
 
-                os.environ["NE111_GRADER_ASSIGNMENT"] = "A8"
-                os.environ["NE111_GRADER_SUBMISSION"] = str(launch / "A8.py")
+                os.environ["NE111_GRADER_ASSIGNMENT"] = assignment
+                os.environ["NE111_GRADER_SUBMISSION"] = str(launch / submission.name)
                 spec = importlib.util.find_spec("ne111_checker.student_app")
                 assert spec is not None and spec.origin is not None
                 app = AppTest.from_file(Path(spec.origin)).run(timeout=20)
@@ -86,7 +102,7 @@ def main() -> None:
                 assert not app.error
                 assert app.success
                 print(
-                    "Installed A8 CLI is healthy; Q3 reads the selected external file."
+                    f"Installed {assignment} CLI is healthy. Q3 reads the selected external file."
                 )
             except BaseException:
                 log.seek(0)

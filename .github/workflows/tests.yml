@@ -54,12 +54,12 @@ jobs:
           } finally {
             $env:PATH = $originalPath
           }
-      - name: Run the installed A4/A5/A6/A7/A8 checkers and regression tests
+      - name: Run the installed A4 through A9 checkers and regression tests
         shell: pwsh
         run: |
           python -m pip install pytest
           if ($LASTEXITCODE -ne 0) { throw "Test dependency installation failed" }
-          python -m pytest tests/test_inserted_letters.py tests/test_a3_a4_notebook_integration.py tests/test_a5_notebook_integration.py tests/test_a3_a8_integration.py tests/test_a7_integration.py tests/test_a8_integration.py tests/test_whitespace.py tests/test_file_picker.py tests/test_native_file_dialog.py tests/test_student_app.py
+          python -m pytest tests/test_inserted_letters.py tests/test_a3_a4_notebook_integration.py tests/test_a5_notebook_integration.py tests/test_a3_a8_integration.py tests/test_a7_integration.py tests/test_a8_integration.py tests/test_a9_integration.py tests/test_whitespace.py tests/test_file_picker.py tests/test_native_file_dialog.py tests/test_student_app.py
           if ($LASTEXITCODE -ne 0) { throw "Checker regression tests failed" }
           python scripts/smoke_a4.py
           if ($LASTEXITCODE -ne 0) { throw "A4 dashboard smoke test failed" }
@@ -69,8 +69,10 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw "A6 dashboard smoke test failed" }
           python scripts/smoke_a7.py
           if ($LASTEXITCODE -ne 0) { throw "A7 dashboard smoke test failed" }
-          python scripts/smoke_a8.py
+          python scripts/smoke_function_checker.py A8
           if ($LASTEXITCODE -ne 0) { throw "A8 dashboard smoke test failed" }
+          python scripts/smoke_function_checker.py A9
+          if ($LASTEXITCODE -ne 0) { throw "A9 dashboard smoke test failed" }
       - name: Exercise the installed Linux native file dialog
         if: runner.os == 'Linux'
         shell: bash
