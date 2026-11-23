@@ -49,6 +49,8 @@ jobs:
             if ($LASTEXITCODE -ne 0) { throw "Git is still available on PATH" }
             & $checkerPython -m pip install "$env:CHECKER_ARCHIVE"
             if ($LASTEXITCODE -ne 0) { throw "Archive installation failed" }
+            & $checkerPython -c "from importlib.metadata import version; from pathlib import Path; import tomllib; expected = tomllib.loads(Path('pyproject.toml').read_text(encoding='utf-8'))['project']['version']; assert version('uw-ne111-checker') == expected"
+            if ($LASTEXITCODE -ne 0) { throw "Installed checker version does not match pyproject.toml" }
             & $checkerPython -m ne111_checker --help
             if ($LASTEXITCODE -ne 0) { throw "Installed CLI could not start" }
           } finally {
